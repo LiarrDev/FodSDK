@@ -16,7 +16,13 @@ import javax.crypto.NoSuchPaddingException;
 
 public class CipherUtil {
 
-    private static final String PUBLIC_KEY = "";    // TODO: Replace with your public key
+    private static final String PUBLIC_KEY = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAs/z/qvUIoPtSdUtyRCs4"
+            + "BRtQgmJ7sm9WDkocFIVfxjGV8BbRehI3Jb3Z5OjrJEa4U3QbjpIwp+VQHf5xVRDe"
+            + "c92s8E3ByR+QKDRY+BGPB2rxMtoXKl7Q8kd+jcwG0BPuFTUix65MNfLAYSm8Gn30"
+            + "1eVQBhz3gAqmt4jBoxWtGPRshEbTiPWFBoX2twoBlpsWYDrqiK4P+XnbWAKuQxJc"
+            + "9gj718aEqMhyfqS9ojYNbElQKaieI/V5qcazDYCBQfKthcXeT+gJ4LFmejNP0Z5v"
+            + "peOmw3xBTVVA8Jp+AJPFSQ23HtaWwV0qaExhdyiwmxgv6ssg+8KErlz8xzZqBMhJ"
+            + "XwIDAQAB";
 
     public static String encrypt(String data) {
         try {
