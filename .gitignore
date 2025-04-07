@@ -1,3 +1,11 @@
+# Built application files
+.gradle
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+.cxx
+
 # Gradle files
 .gradle/
 build/
