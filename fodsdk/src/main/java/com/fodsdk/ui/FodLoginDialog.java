@@ -8,6 +8,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
+import com.fodsdk.utils.CipherUtil;
 import com.fodsdk.utils.ResourceUtil;
 
 public class FodLoginDialog extends FodBaseDialog {
@@ -16,7 +17,7 @@ public class FodLoginDialog extends FodBaseDialog {
     private RadioGroup radioGroup;
     private RadioButton rbAccount, rbSms;
     private View accountLoginLayout, accountRegisterLayout, smsLoginLayout;
-    private EditText etLoginAccount, etLoginPassword, etRegisterAccount, etRegisterPassword, etMobile, etSmsCode;
+    private EditText etLoginAccount, etLoginPassword, etRegisterAccount, etRegisterPassword, etConfirmPassword, etMobile, etSmsCode;
     private Button btnAccountLogin, btnAccountRegister, btnGetSms, btnSmsLogin;
     private TextView tvAccountRegister, tvAccountLogin;
 
@@ -99,12 +100,19 @@ public class FodLoginDialog extends FodBaseDialog {
 
     private void doAccountRegister() {
         String account = etRegisterAccount.getText().toString();
-        String password = etRegisterPassword.getText().toString();
-        if (account.length() < 6 || password.length() < 6) {
+        String registerPassword = etRegisterPassword.getText().toString();
+        String confirmPassword = etConfirmPassword.getText().toString();
+        if (account.length() < 6 || registerPassword.length() < 6) {
+            // TODO: 提示
+            return;
+        }
+        if (!registerPassword.equals(confirmPassword)) {
             // TODO: 提示
             return;
         }
         // TODO: 账号注册
+        String rsaRegisterPassword = CipherUtil.encrypt(registerPassword);
+        String rsaConfirmPassword = CipherUtil.encrypt(confirmPassword);
     }
 
     private void getSmsCode() {
@@ -163,6 +171,7 @@ public class FodLoginDialog extends FodBaseDialog {
         accountRegisterLayout = rootView.findViewById(ResourceUtil.getViewId("layout_account_register"));
         etRegisterAccount = rootView.findViewById(ResourceUtil.getViewId("et_register_account"));
         etRegisterPassword = rootView.findViewById(ResourceUtil.getViewId("et_register_password"));
+        etConfirmPassword = rootView.findViewById(ResourceUtil.getViewId("et_confirm_password"));
         btnAccountRegister = rootView.findViewById(ResourceUtil.getViewId("btn_account_register"));
         tvAccountLogin = rootView.findViewById(ResourceUtil.getViewId("tv_account_login"));
 
