@@ -35,6 +35,20 @@
         android:textColorHint="@color/fod_color_acacac"
         tools:text="asdfa" />
 
+    <EditText
+        android:id="@+id/et_confirm_password"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="8dp"
+        android:background="@drawable/fod_shape_radius_16_stroke_1"
+        android:hint="确认密码"
+        android:inputType="textPassword"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="8dp"
+        android:textColor="@android:color/black"
+        android:textColorHint="@color/fod_color_acacac"
+        tools:text="asdfa" />
+
     <Button
         android:id="@+id/btn_account_register"
         android:layout_width="match_parent"

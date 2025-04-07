@@ -22,8 +22,8 @@ public class FodGameConfig {
     private int cId;
     @SerializedName("adid")
     private int adId;
-    @SerializedName("sdkVersion")
-    private String sdkVersion;
+    @SerializedName("sdkVer")
+    private String sdkVer;
 
     public int getGId() {
         return gId;
@@ -97,12 +97,12 @@ public class FodGameConfig {
         this.adId = adId;
     }
 
-    public String getSdkVersion() {
-        return sdkVersion;
+    public String getSdkVer() {
+        return sdkVer;
     }
 
-    public void setSdkVersion(String sdkVersion) {
-        this.sdkVersion = sdkVersion;
+    public void setSdkVer(String sdkVer) {
+        this.sdkVer = sdkVer;
     }
 
     @Override
@@ -117,7 +117,7 @@ public class FodGameConfig {
                 ", pcId=" + pcId +
                 ", cId=" + cId +
                 ", adId=" + adId +
-                ", sdkVersion='" + sdkVersion + '\'' +
+                ", sdkVer='" + sdkVer + '\'' +
                 '}';
     }
 }

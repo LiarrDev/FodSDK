@@ -12,5 +12,9 @@ public abstract class FodBaseApi {
         return getHost() + name;
     }
 
+    public String getApiName() {
+        return name;
+    }
+
     public abstract String getHost();
 }
