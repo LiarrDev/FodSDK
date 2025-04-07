@@ -1,6 +1,6 @@
 package com.fodsdk.net;
 
-public class ApiInit extends FodBaseApi {
+public class ApiInit extends FodBaseUserApi {
     public ApiInit() {
         super("ApiInit.php");
     }
