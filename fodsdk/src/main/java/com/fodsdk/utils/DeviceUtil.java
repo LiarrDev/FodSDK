@@ -1,11 +1,13 @@
 package com.fodsdk.utils;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Build;
 import android.provider.Settings;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
@@ -13,6 +15,68 @@ import android.text.TextUtils;
 import com.fodsdk.FodBaseApplication;
 
 public class DeviceUtil {
+
+    private static String imei = null;
+    private static String oaid = null;
+    private static final int REQUEST_CODE_READ_PHONE_STATE = 1050;
+
+    public static void initPrivacy(Activity activity) {
+        if (oaid == null) {
+            initOaId(activity);
+        }
+        if (oaid == null) {
+            initImei(activity);
+        }
+    }
+
+    public static void initOaId(Context context) {
+        OaIdHelper helper = new OaIdHelper(new OaIdHelper.AppIdsUpdater() {
+            @Override
+            public void onIdsUpdate(String id) {
+                if (TextUtils.isEmpty(id)) {
+                    LogUtil.e("OAID 为空");
+                } else {
+                    oaid = id;
+                    LogUtil.i("OAID:" + id);
+                }
+            }
+        });
+        helper.getDeviceIds(context);
+    }
+
+    public static String getOaId() {
+        return oaid;
+    }
+
+    public static void initImei(Activity activity) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            return;
+        }
+        if (activity.checkSelfPermission(Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+            activity.requestPermissions(new String[]{Manifest.permission.READ_PHONE_STATE}, REQUEST_CODE_READ_PHONE_STATE); // TODO: 权限响应处理
+        } else {
+            tryImei(activity);
+        }
+    }
+
+    public static void tryImei(Context context) {
+        try {
+            TelephonyManager telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+            String id = telephonyManager.getDeviceId();
+            if (TextUtils.isEmpty(id)) {
+                LogUtil.e("IMEI 为kon");
+            } else {
+                imei = id;
+                LogUtil.v("IMEI 不为空：" + id);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static String getImei() {
+        return imei;
+    }
 
     /**
      * 判断是否为竖屏
@@ -97,7 +161,7 @@ public class DeviceUtil {
             case TelephonyManager.NETWORK_TYPE_1xRTT:
             case TelephonyManager.NETWORK_TYPE_IDEN:
                 return "2G";
-                case TelephonyManager.NETWORK_TYPE_UMTS:
+            case TelephonyManager.NETWORK_TYPE_UMTS:
             case TelephonyManager.NETWORK_TYPE_EVDO_0:
             case TelephonyManager.NETWORK_TYPE_EVDO_A:
             case TelephonyManager.NETWORK_TYPE_HSDPA:

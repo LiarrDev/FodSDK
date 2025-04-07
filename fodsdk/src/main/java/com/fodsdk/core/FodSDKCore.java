@@ -7,6 +7,7 @@ import com.fodsdk.entities.FodGameConfig;
 import com.fodsdk.net.FodRepository;
 import com.fodsdk.settings.GlobalSettings;
 import com.fodsdk.ui.FodAgreementDialog;
+import com.fodsdk.utils.DeviceUtil;
 import com.fodsdk.utils.LogUtil;
 import com.fodsdk.utils.ResourceUtil;
 import com.google.gson.Gson;
@@ -33,6 +34,7 @@ public abstract class FodSDKCore {
 
         }
         initConfig();
+        DeviceUtil.initPrivacy(activity);
 
         if (config != null) {
             this.callback.onInit(FodConstants.Code.SUCCESS, new Bundle());  // TODO: 所有配置加载成功后

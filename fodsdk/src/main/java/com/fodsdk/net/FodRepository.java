@@ -113,8 +113,8 @@ public class FodRepository {
     }
 
     private void packParams(JSONObject json) throws JSONException {
-//            obj.put("imei", DeviceUtil.getDeviceId(context));
-//            obj.put("oaid", DeviceUtil.getOAID(context));
+        json.put("imei", DeviceUtil.getImei());
+        json.put("oaid", DeviceUtil.getOaId());
         json.put("androidid", DeviceUtil.getAndroidId());
         json.put("mno", DeviceUtil.getNetworkOperatorName());
         json.put("nm", DeviceUtil.getNetworkType());
