@@ -8,7 +8,6 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
-import com.fodsdk.utils.CipherUtil;
 import com.fodsdk.utils.ResourceUtil;
 
 public class FodLoginDialog extends FodBaseDialog {
@@ -111,8 +110,6 @@ public class FodLoginDialog extends FodBaseDialog {
             return;
         }
         // TODO: 账号注册
-        String rsaRegisterPassword = CipherUtil.encrypt(registerPassword);
-        String rsaConfirmPassword = CipherUtil.encrypt(confirmPassword);
     }
 
     private void getSmsCode() {

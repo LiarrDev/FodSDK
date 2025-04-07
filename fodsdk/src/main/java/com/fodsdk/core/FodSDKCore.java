@@ -16,7 +16,7 @@ public abstract class FodSDKCore {
     protected Activity activity;
     protected IPlatformCallback callback;
     public FodGameConfig config;
-    private final FodRepository repository = new FodRepository();
+    private final FodRepository repo = new FodRepository();
     private final Gson gson = new Gson();
 
 
@@ -49,7 +49,7 @@ public abstract class FodSDKCore {
         try {
             config = gson.fromJson(ResourceUtil.readAssets2String(FodConstants.FOD_GAME_CONFIG_FILE), FodGameConfig.class);
             LogUtil.e("config: " + config);
-            repository.init(config);
+            repo.init(config);
         } catch (Exception e) {
             e.printStackTrace();
         }
