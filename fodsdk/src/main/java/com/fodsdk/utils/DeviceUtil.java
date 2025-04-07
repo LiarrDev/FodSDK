@@ -16,17 +16,13 @@ import com.fodsdk.FodBaseApplication;
 
 public class DeviceUtil {
 
-    private static String imei = null;
-    private static String oaid = null;
+    private static String imei = "00000000-0000-0000-0000-000000000000";
+    private static String oaid = "00000000-0000-0000-0000-000000000000";
     private static final int REQUEST_CODE_READ_PHONE_STATE = 1050;
 
     public static void initPrivacy(Activity activity) {
-        if (oaid == null) {
-            initOaId(activity);
-        }
-        if (oaid == null) {
-            initImei(activity);
-        }
+        initOaId(activity);
+        initImei(activity);
     }
 
     public static void initOaId(Context context) {
