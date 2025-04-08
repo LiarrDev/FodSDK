@@ -9,7 +9,7 @@
         android:id="@+id/btn_back"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/ic_fod_back" />
+        android:background="@drawable/fod_ic_back" />
 
     <TextView
         android:id="@+id/tv_title"

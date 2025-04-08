@@ -8,7 +8,9 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
+import com.fodsdk.net.FodRepository;
 import com.fodsdk.utils.ResourceUtil;
+import com.fodsdk.utils.ToastUtil;
 
 public class FodLoginDialog extends FodBaseDialog {
 
@@ -19,9 +21,11 @@ public class FodLoginDialog extends FodBaseDialog {
     private EditText etLoginAccount, etLoginPassword, etRegisterAccount, etRegisterPassword, etConfirmPassword, etMobile, etSmsCode;
     private Button btnAccountLogin, btnAccountRegister, btnGetSms, btnSmsLogin;
     private TextView tvAccountRegister, tvAccountLogin;
+    private final FodRepository repo;
 
-    public FodLoginDialog(Context context) {
+    public FodLoginDialog(Context context, FodRepository repo) {
         super(context);
+        this.repo = repo;
     }
 
     @Override
@@ -61,6 +65,9 @@ public class FodLoginDialog extends FodBaseDialog {
         btnAccountRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                etRegisterAccount.clearFocus();
+                etConfirmPassword.clearFocus();
+                etRegisterPassword.clearFocus();
                 doAccountRegister();
             }
         });
@@ -91,10 +98,10 @@ public class FodLoginDialog extends FodBaseDialog {
         String account = etLoginAccount.getText().toString();
         String password = etLoginPassword.getText().toString();
         if (account.length() < 6 || password.length() < 6) {
-            // TODO: 提示
+            ToastUtil.show("账号或密码长度不能小于 6 位");
             return;
         }
-        // TODO: 账号登录
+        repo.accountLogin(account, password);
     }
 
     private void doAccountRegister() {
@@ -102,33 +109,37 @@ public class FodLoginDialog extends FodBaseDialog {
         String registerPassword = etRegisterPassword.getText().toString();
         String confirmPassword = etConfirmPassword.getText().toString();
         if (account.length() < 6 || registerPassword.length() < 6) {
-            // TODO: 提示
+            ToastUtil.show("账号或密码长度不能小于 6 位");
             return;
         }
         if (!registerPassword.equals(confirmPassword)) {
-            // TODO: 提示
+            ToastUtil.show("两次输入的密码不一致");
             return;
         }
-        // TODO: 账号注册
+        repo.accountRegister(account, registerPassword, confirmPassword);
     }
 
     private void getSmsCode() {
         String mobile = etMobile.getText().toString();
         if (mobile.isEmpty()) {
-            // TODO: 提示
+            ToastUtil.show("请输入手机号");
             return;
         }
-        // TODO: 获取验证码
+        repo.getSms(mobile);
     }
 
     private void doSmsLogin() {
         String mobile = etMobile.getText().toString();
         String smsCode = etSmsCode.getText().toString();
-        if (mobile.isEmpty() || smsCode.isEmpty()) {
-            // TODO: 提示
+        if (mobile.isEmpty()) {
+            ToastUtil.show("请输入手机号");
             return;
         }
-        // TODO: 验证码登录
+        if (smsCode.isEmpty()) {
+            ToastUtil.show("请输入验证码");
+            return;
+        }
+        repo.mobileRegister(mobile, smsCode);
     }
 
     private void showAccountLoginLayout() {

@@ -7,6 +7,7 @@ import com.fodsdk.entities.FodGameConfig;
 import com.fodsdk.net.FodRepository;
 import com.fodsdk.settings.GlobalSettings;
 import com.fodsdk.ui.FodAgreementDialog;
+import com.fodsdk.ui.FodLoginDialog;
 import com.fodsdk.utils.DeviceUtil;
 import com.fodsdk.utils.LogUtil;
 import com.fodsdk.utils.ResourceUtil;
@@ -58,7 +59,8 @@ public abstract class FodSDKCore {
     }
 
     public void login() {
-
+        FodLoginDialog dialog = new FodLoginDialog(activity, repo);
+        dialog.show();
     }
 
     public void logout() {

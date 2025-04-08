@@ -1,6 +1,9 @@
 package com.fodsdk.net;
 
 import com.fodsdk.entities.FodGameConfig;
+import com.fodsdk.ui.FodLoadingDialog;
+import com.fodsdk.ui.FodTipsDialog;
+import com.fodsdk.utils.ActivityUtil;
 import com.fodsdk.utils.AppUtil;
 import com.fodsdk.utils.CipherUtil;
 import com.fodsdk.utils.DeviceUtil;
@@ -14,6 +17,7 @@ public class FodRepository {
 
     private final Gson gson = new Gson();
     private FodGameConfig config;
+    private FodLoadingDialog loading;
 
     public void init(FodGameConfig config) {
         this.config = config;
@@ -50,9 +54,11 @@ public class FodRepository {
             obj.put("password", rsaRegisterPassword);
             obj.put("confirm_password", rsaConfirmPassword);
             packParams(obj);
+            showLoading();
             FodNet.post(new ApiRegisterByAccount(), obj, new FodNet.Callback() {
                 @Override
                 public void onResponse(JSONObject response) {
+                    hideLoading();
                     boolean status = response.optBoolean("status");
                     if (status) {
                         // TODO
@@ -62,6 +68,7 @@ public class FodRepository {
                 }
             });
         } catch (JSONException e) {
+            ToastUtil.show("参数错误");
             e.printStackTrace();
         }
     }
@@ -96,9 +103,11 @@ public class FodRepository {
             obj.put("phone", mobile);
             obj.put("type", "phone_login");
             obj.put("androidid", DeviceUtil.getAndroidId());
+            showLoading();
             FodNet.post(new ApiGetMessage(), obj, new FodNet.Callback() {
                 @Override
                 public void onResponse(JSONObject response) {
+                    hideLoading();
                     boolean status = response.optBoolean("status");
                     if (status) {
                         // TODO
@@ -106,10 +115,33 @@ public class FodRepository {
                         ToastUtil.show(response.optString("data"));
                     }
                 }
+
+                @Override
+                public void onError(Exception e) {
+                    hideLoading();
+                    FodNet.Callback.super.onError(e);
+                }
             });
         } catch (JSONException e) {
+            ToastUtil.show("参数错误");
             e.printStackTrace();
         }
+    }
+
+    private void showLoading() {
+        loading = new FodLoadingDialog(ActivityUtil.getTopActivity());
+        loading.show();
+    }
+
+    private void hideLoading() {
+        if (loading != null) {
+            loading.dismiss();
+        }
+    }
+
+    private void showTips(String tips) {
+        FodTipsDialog dialog = new FodTipsDialog(ActivityUtil.getTopActivity(), tips);
+        dialog.show();
     }
 
     private void packParams(JSONObject json) throws JSONException {
