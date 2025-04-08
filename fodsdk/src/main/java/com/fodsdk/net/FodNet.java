@@ -6,12 +6,9 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.fodsdk.utils.LogUtil;
-
-import org.json.JSONObject;
 
 import java.util.Map;
 
@@ -23,26 +20,6 @@ public class FodNet {
         queue = Volley.newRequestQueue(context);
     }
 
-    public static void post(FodBaseApi api, JSONObject json, Callback callback) {
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
-                Request.Method.POST,
-                api.getUrl(),
-                json,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        callback.onResponse(response);
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        callback.onError(error);
-                    }
-                });
-        queue.add(jsonObjectRequest);
-    }
-
     public static void post(FodBaseApi api, Map<String, String> map, Callback callback) {
         StringRequest postRequest = new StringRequest(
                 Request.Method.POST,
@@ -50,11 +27,13 @@ public class FodNet {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
+                        callback.onResponse(response);
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
+                        callback.onError(error);
                     }
                 }) {
             @Override
@@ -67,7 +46,7 @@ public class FodNet {
 
     public interface Callback {
 
-        void onResponse(JSONObject response);
+        void onResponse(String response);
 
         default void onError(Exception e) {
             LogUtil.e(e.getMessage());

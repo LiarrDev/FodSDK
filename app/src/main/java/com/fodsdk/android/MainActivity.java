@@ -2,6 +2,7 @@ package com.fodsdk.android;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
 import com.fodsdk.core.FodSDK;
@@ -10,6 +11,8 @@ import com.fodsdk.ui.FodUserCenterDialog;
 import com.fodsdk.ui.view.FodFloatingBall;
 
 public class MainActivity extends Activity implements View.OnClickListener {
+
+    private final static String TAG = "MainActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,8 +29,8 @@ public class MainActivity extends Activity implements View.OnClickListener {
         if (view.getId() == R.id.btn_init) {
             FodSDK.get().init(this, new IPlatformCallback() {
                 @Override
-                public void onInit(int code, Bundle bundle) {
-
+                public void onInit(boolean success, Bundle bundle) {
+                    Log.d(TAG, "Init: " + success);
                 }
 
                 @Override

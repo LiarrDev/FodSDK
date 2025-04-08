@@ -1,5 +1,7 @@
 package com.fodsdk.net;
 
+import android.util.Pair;
+
 import com.fodsdk.entities.FodGameConfig;
 import com.fodsdk.ui.FodLoadingDialog;
 import com.fodsdk.ui.FodTipsDialog;
@@ -7,11 +9,16 @@ import com.fodsdk.utils.ActivityUtil;
 import com.fodsdk.utils.AppUtil;
 import com.fodsdk.utils.CipherUtil;
 import com.fodsdk.utils.DeviceUtil;
+import com.fodsdk.core.FodCallback;
 import com.fodsdk.utils.ToastUtil;
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class FodRepository {
 
@@ -19,24 +26,43 @@ public class FodRepository {
     private FodGameConfig config;
     private FodLoadingDialog loading;
 
-    public void init(FodGameConfig config) {
+    public void init(FodGameConfig config, FodCallback<Pair<Boolean, Boolean>> callback) {
         this.config = config;
         try {
             String json = gson.toJson(config);
-            JSONObject obj = new JSONObject(json);
-            FodNet.post(new ApiInit(), obj, new FodNet.Callback() {
+            Map map = gson.fromJson(json, Map.class);
+            FodNet.post(new ApiInit(), map, new FodNet.Callback() {
                 @Override
-                public void onResponse(JSONObject response) {
-                    boolean status = response.optBoolean("status");
-                    if (status) {
-                        // TODO
-                    } else {
-                        ToastUtil.show(response.optString("data"));
+                public void onResponse(String response) {
+                    try {
+                        JSONObject rsp = new JSONObject(response);
+                        boolean status = rsp.optBoolean("status");
+                        if (status) {
+                            JSONObject data = rsp.optJSONObject("data");
+                            if (data == null) {
+                                callback.onValue(new Pair<>(false, false));
+                                return;
+                            }
+                            JSONObject floatWindow = data.optJSONObject("float_window_status");
+                            if (floatWindow == null) {
+                                callback.onValue(new Pair<>(false, false));
+                                return;
+                            }
+                            boolean showFloating = floatWindow.optBoolean("status");
+                            callback.onValue(new Pair<>(true, showFloating));
+                        } else {
+                            ToastUtil.show(rsp.optString("data"));
+                            callback.onValue(new Pair<>(false, false));
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        callback.onValue(new Pair<>(false, false));
                     }
                 }
             });
-        } catch (JSONException e) {
+        } catch (JsonSyntaxException e) {
             e.printStackTrace();
+            callback.onValue(new Pair<>(false, false));
         }
     }
 
@@ -55,16 +81,16 @@ public class FodRepository {
             obj.put("confirm_password", rsaConfirmPassword);
             packParams(obj);
             showLoading();
-            FodNet.post(new ApiRegisterByAccount(), obj, new FodNet.Callback() {
+            FodNet.post(new ApiRegisterByAccount(), new HashMap<>(), new FodNet.Callback() {
                 @Override
-                public void onResponse(JSONObject response) {
+                public void onResponse(String response) {
                     hideLoading();
-                    boolean status = response.optBoolean("status");
+                    /*boolean status = response.optBoolean("status");
                     if (status) {
                         // TODO
                     } else {
                         ToastUtil.show(response.optString("data"));
-                    }
+                    }*/
                 }
             });
         } catch (JSONException e) {
@@ -80,15 +106,15 @@ public class FodRepository {
             obj.put("phone", mobile);
             obj.put("code", sms);
             packParams(obj);
-            FodNet.post(new ApiRegisterByPhone(), obj, new FodNet.Callback() {
+            FodNet.post(new ApiRegisterByPhone(), new HashMap<>(), new FodNet.Callback() {
                 @Override
-                public void onResponse(JSONObject response) {
-                    boolean status = response.optBoolean("status");
+                public void onResponse(String response) {
+                    /*boolean status = response.optBoolean("status");
                     if (status) {
                         // TODO
                     } else {
                         ToastUtil.show(response.optString("data"));
-                    }
+                    }*/
                 }
             });
         } catch (JSONException e) {
@@ -104,16 +130,16 @@ public class FodRepository {
             obj.put("type", "phone_login");
             obj.put("androidid", DeviceUtil.getAndroidId());
             showLoading();
-            FodNet.post(new ApiGetMessage(), obj, new FodNet.Callback() {
+            FodNet.post(new ApiGetMessage(), new HashMap<>(), new FodNet.Callback() {
                 @Override
-                public void onResponse(JSONObject response) {
+                public void onResponse(String response) {
                     hideLoading();
-                    boolean status = response.optBoolean("status");
+                   /* boolean status = response.optBoolean("status");
                     if (status) {
                         // TODO
                     } else {
                         ToastUtil.show(response.optString("data"));
-                    }
+                    }*/
                 }
 
                 @Override

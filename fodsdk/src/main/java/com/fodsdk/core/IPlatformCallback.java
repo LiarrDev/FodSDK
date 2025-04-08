@@ -4,7 +4,7 @@ import android.os.Bundle;
 
 public interface IPlatformCallback {
 
-    void onInit(int code, Bundle bundle);
+    void onInit(boolean success, Bundle bundle);
 
     void onLogin(int code, Bundle bundle);
 

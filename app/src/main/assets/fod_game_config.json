@@ -1,12 +1,12 @@
 {
-  "gid": 1,
-  "pid": 1,
-  "areaid": 1,
-  "osid": 1,
-  "client": 1,
-  "pkid": 1,
-  "pcid": 1,
-  "cid": 1,
-  "adid": 1,
+  "gid": "1",
+  "pid": "1",
+  "areaid": "1",
+  "osid": "1",
+  "client": "1",
+  "pkid": "1",
+  "pcid": "1",
+  "cid": "1",
+  "adid": "1",
   "sdkVer": "1.0.0"
 }

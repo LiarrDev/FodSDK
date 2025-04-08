@@ -2,12 +2,13 @@ package com.fodsdk.core;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Pair;
 
 import com.fodsdk.entities.FodGameConfig;
 import com.fodsdk.net.FodRepository;
 import com.fodsdk.settings.GlobalSettings;
-import com.fodsdk.ui.FodAgreementDialog;
 import com.fodsdk.ui.FodLoginDialog;
+import com.fodsdk.ui.view.FodFloatingBall;
 import com.fodsdk.utils.DeviceUtil;
 import com.fodsdk.utils.LogUtil;
 import com.fodsdk.utils.ResourceUtil;
@@ -20,26 +21,29 @@ public abstract class FodSDKCore {
     public FodGameConfig config;
     private final FodRepository repo = new FodRepository();
     private final Gson gson = new Gson();
-
+    private FodFloatingBall ball = new FodFloatingBall();
+    private boolean showFloatingBall = false;
 
     public synchronized void init(Activity activity, IPlatformCallback callback) {
         LogUtil.v("init");
         this.activity = activity;
         this.callback = callback;
 
-        boolean firstLaunch = GlobalSettings.isFirstLaunch();
+        /*boolean firstLaunch = GlobalSettings.isFirstLaunch();
         if (firstLaunch) {
             FodAgreementDialog dialog = new FodAgreementDialog(activity);
             dialog.show();
         } else {
-
-        }
+        }*/
         initConfig();
         DeviceUtil.initPrivacy(activity);
-
-        if (config != null) {
-            this.callback.onInit(FodConstants.Code.SUCCESS, new Bundle());  // TODO: 所有配置加载成功后
-        }
+        repo.init(config, new FodCallback<Pair<Boolean, Boolean>>() {
+            @Override
+            public void onValue(Pair<Boolean, Boolean> pair) {
+                callback.onInit(pair.first, new Bundle());
+                showFloatingBall = pair.second;
+            }
+        });
     }
 
 
@@ -51,8 +55,7 @@ public abstract class FodSDKCore {
     private void initConfig() {
         try {
             config = gson.fromJson(ResourceUtil.readAssets2String(FodConstants.FOD_GAME_CONFIG_FILE), FodGameConfig.class);
-            LogUtil.e("config: " + config);
-            repo.init(config);
+            LogUtil.v("config: " + config);
         } catch (Exception e) {
             e.printStackTrace();
         }

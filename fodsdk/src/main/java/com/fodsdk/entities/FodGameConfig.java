@@ -5,95 +5,95 @@ import com.google.gson.annotations.SerializedName;
 public class FodGameConfig {
 
     @SerializedName("gid")
-    private int gId;
+    private String gId;
     @SerializedName("pid")
-    private int pId;
+    private String pId;
     @SerializedName("areaid")
-    private int areaId;
+    private String areaId;
     @SerializedName("osid")
-    private int osId;
+    private String osId;
     @SerializedName("client")
-    private int client;
+    private String client;
     @SerializedName("pkid")
-    private int pkId;
+    private String pkId;
     @SerializedName("pcid")
-    private int pcId;
+    private String pcId;
     @SerializedName("cid")
-    private int cId;
+    private String cId;
     @SerializedName("adid")
-    private int adId;
+    private String adId;
     @SerializedName("sdkVer")
     private String sdkVer;
 
-    public int getGId() {
+    public String getGId() {
         return gId;
     }
 
-    public void setGId(int gId) {
+    public void setGId(String gId) {
         this.gId = gId;
     }
 
-    public int getPId() {
+    public String getPId() {
         return pId;
     }
 
-    public void setPId(int pId) {
+    public void setPId(String pId) {
         this.pId = pId;
     }
 
-    public int getAreaId() {
+    public String getAreaId() {
         return areaId;
     }
 
-    public void setAreaId(int areaId) {
+    public void setAreaId(String areaId) {
         this.areaId = areaId;
     }
 
-    public int getOsId() {
+    public String getOsId() {
         return osId;
     }
 
-    public void setOsId(int osId) {
+    public void setOsId(String osId) {
         this.osId = osId;
     }
 
-    public int getClient() {
+    public String getClient() {
         return client;
     }
 
-    public void setClient(int client) {
+    public void setClient(String client) {
         this.client = client;
     }
 
-    public int getPkId() {
+    public String getPkId() {
         return pkId;
     }
 
-    public void setPkId(int pkId) {
+    public void setPkId(String pkId) {
         this.pkId = pkId;
     }
 
-    public int getPcId() {
+    public String getPcId() {
         return pcId;
     }
 
-    public void setPcId(int pcId) {
+    public void setPcId(String pcId) {
         this.pcId = pcId;
     }
 
-    public int getCId() {
+    public String getCId() {
         return cId;
     }
 
-    public void setCId(int cId) {
+    public void setCId(String cId) {
         this.cId = cId;
     }
 
-    public int getAdId() {
+    public String getAdId() {
         return adId;
     }
 
-    public void setAdId(int adId) {
+    public void setAdId(String adId) {
         this.adId = adId;
     }
 
@@ -108,15 +108,15 @@ public class FodGameConfig {
     @Override
     public String toString() {
         return "FodGameConfig{" +
-                "gId=" + gId +
-                ", pId=" + pId +
-                ", areaId=" + areaId +
-                ", osId=" + osId +
-                ", client=" + client +
-                ", pkId=" + pkId +
-                ", pcId=" + pcId +
-                ", cId=" + cId +
-                ", adId=" + adId +
+                "gId='" + gId + '\'' +
+                ", pId='" + pId + '\'' +
+                ", areaId='" + areaId + '\'' +
+                ", osId='" + osId + '\'' +
+                ", client='" + client + '\'' +
+                ", pkId='" + pkId + '\'' +
+                ", pcId='" + pcId + '\'' +
+                ", cId='" + cId + '\'' +
+                ", adId='" + adId + '\'' +
                 ", sdkVer='" + sdkVer + '\'' +
                 '}';
     }
