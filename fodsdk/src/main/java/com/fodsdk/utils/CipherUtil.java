@@ -26,12 +26,17 @@ public class CipherUtil {
 
     public static String encrypt(String data) {
         try {
-            PublicKey key = KeyFactory.getInstance("RSA").generatePublic(new X509EncodedKeySpec(Base64.decode(PUBLIC_KEY, Base64.DEFAULT)));
-            Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
-            cipher.init(Cipher.ENCRYPT_MODE, key);
-            return Base64.encodeToString(cipher.doFinal(data.getBytes()), Base64.NO_WRAP);
-        } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeySpecException |
-                 InvalidKeyException | BadPaddingException | IllegalBlockSizeException e) {
+            byte[] decodedKey = Base64.decode(PUBLIC_KEY, Base64.DEFAULT);
+            X509EncodedKeySpec spec = new X509EncodedKeySpec(decodedKey);
+            KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+            PublicKey pubKey = keyFactory.generatePublic(spec);
+            Cipher cipher = Cipher.getInstance("RSA");
+            cipher.init(Cipher.ENCRYPT_MODE, pubKey);
+            byte[] encryptedData = cipher.doFinal(data.getBytes());
+            return Base64.encodeToString(encryptedData, Base64.DEFAULT);
+        } catch (
+                NoSuchPaddingException | IllegalBlockSizeException | NoSuchAlgorithmException |
+                InvalidKeySpecException | BadPaddingException | InvalidKeyException e) {
             throw new RuntimeException(e);
         }
     }

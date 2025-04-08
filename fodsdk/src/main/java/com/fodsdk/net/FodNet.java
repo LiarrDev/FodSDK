@@ -27,6 +27,8 @@ public class FodNet {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
+                        LogUtil.v("POST response: " + response);
+                        LogUtil.v("================================");
                         callback.onResponse(response);
                     }
                 },
@@ -38,6 +40,10 @@ public class FodNet {
                 }) {
             @Override
             protected Map<String, String> getParams() {
+                LogUtil.v("================================");
+                LogUtil.v("POST request: " + api.getUrl());
+                LogUtil.v("POST params: " + map.toString());
+                LogUtil.v("================================");
                 return map;
             }
         };

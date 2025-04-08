@@ -67,7 +67,6 @@ public class FodRepository {
     }
 
     public void accountLogin(String account, String password) {
-
     }
 
     public void accountRegister(String account, String registerPassword, String confirmPassword) {
@@ -75,16 +74,22 @@ public class FodRepository {
         String rsaConfirmPassword = CipherUtil.encrypt(confirmPassword);
         try {
             String json = gson.toJson(config);
-            JSONObject obj = new JSONObject(json);
-            obj.put("account", account);
-            obj.put("password", rsaRegisterPassword);
-            obj.put("confirm_password", rsaConfirmPassword);
-            packParams(obj);
+            Map<String, String> map = gson.fromJson(json, Map.class);
+            map.put("account", account);
+            map.put("password", rsaRegisterPassword);
+            map.put("confirm_password", rsaConfirmPassword);
+            packParams(map);
             showLoading();
-            FodNet.post(new ApiRegisterByAccount(), new HashMap<>(), new FodNet.Callback() {
+            FodNet.post(new ApiRegisterByAccount(), map, new FodNet.Callback() {
                 @Override
                 public void onResponse(String response) {
                     hideLoading();
+                    try {
+                        JSONObject rsp = new JSONObject(response);
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                     /*boolean status = response.optBoolean("status");
                     if (status) {
                         // TODO
@@ -93,7 +98,7 @@ public class FodRepository {
                     }*/
                 }
             });
-        } catch (JSONException e) {
+        } catch (JsonSyntaxException e) {
             ToastUtil.show("参数错误");
             e.printStackTrace();
         }
@@ -102,11 +107,11 @@ public class FodRepository {
     public void mobileRegister(String mobile, String sms) {
         try {
             String json = gson.toJson(config);
-            JSONObject obj = new JSONObject(json);
-            obj.put("phone", mobile);
-            obj.put("code", sms);
-            packParams(obj);
-            FodNet.post(new ApiRegisterByPhone(), new HashMap<>(), new FodNet.Callback() {
+            Map<String, String> map = gson.fromJson(json, Map.class);
+            map.put("phone", mobile);
+            map.put("code", sms);
+            packParams(map);
+            FodNet.post(new ApiRegisterByPhone(), map, new FodNet.Callback() {
                 @Override
                 public void onResponse(String response) {
                     /*boolean status = response.optBoolean("status");
@@ -117,7 +122,7 @@ public class FodRepository {
                     }*/
                 }
             });
-        } catch (JSONException e) {
+        } catch (JsonSyntaxException e) {
             e.printStackTrace();
         }
     }
@@ -170,15 +175,15 @@ public class FodRepository {
         dialog.show();
     }
 
-    private void packParams(JSONObject json) throws JSONException {
-        json.put("imei", DeviceUtil.getImei());
-        json.put("oaid", DeviceUtil.getOaId());
-        json.put("androidid", DeviceUtil.getAndroidId());
-        json.put("mno", DeviceUtil.getNetworkOperatorName());
-        json.put("nm", DeviceUtil.getNetworkType());
-        json.put("screen", DeviceUtil.getScreenSize());
-        json.put("osver", DeviceUtil.getOsVersion());
-        json.put("appver", AppUtil.getAppVersionName());
-        json.put("devtype", "android");
+    private void packParams(Map<String, String> map) {
+        map.put("imei", DeviceUtil.getImei());
+        map.put("oaid", DeviceUtil.getOaId());
+        map.put("androidid", DeviceUtil.getAndroidId());
+        map.put("mno", DeviceUtil.getNetworkOperatorName());
+        map.put("nm", DeviceUtil.getNetworkType());
+        map.put("screen", DeviceUtil.getScreenSize());
+        map.put("osver", DeviceUtil.getOsVersion());
+        map.put("appver", AppUtil.getAppVersionName());
+        map.put("devtype", "android");
     }
 }
