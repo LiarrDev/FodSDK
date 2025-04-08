@@ -26,10 +26,10 @@
             android:background="@drawable/fod_selector_radio_background"
             android:button="@null"
             android:paddingHorizontal="16dp"
-            android:paddingVertical="8dp"
+            android:paddingVertical="6dp"
             android:text="@string/fod_account_login"
             android:textColor="@drawable/fod_selector_radio_text"
-            android:textSize="16dp" />
+            android:textSize="14dp" />
 
         <RadioButton
             android:id="@+id/rb_sms"
@@ -38,10 +38,10 @@
             android:background="@drawable/fod_selector_radio_background"
             android:button="@null"
             android:paddingHorizontal="16dp"
-            android:paddingVertical="8dp"
+            android:paddingVertical="6dp"
             android:text="@string/fod_mobile_login"
             android:textColor="@drawable/fod_selector_radio_text"
-            android:textSize="16dp" />
+            android:textSize="14dp" />
     </RadioGroup>
 
     <include
