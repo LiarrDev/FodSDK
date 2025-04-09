@@ -22,7 +22,7 @@ public class FodGameConfig {
     private String cId;
     @SerializedName("adid")
     private String adId;
-    @SerializedName("sdkVer")
+    @SerializedName("sdkver")
     private String sdkVer;
 
     public String getGId() {

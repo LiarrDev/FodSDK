@@ -5,12 +5,14 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.graphics.Point;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
 import android.provider.Settings;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
+import android.view.WindowManager;
 
 import com.fodsdk.FodBaseApplication;
 
@@ -85,13 +87,39 @@ public class DeviceUtil {
      * 屏幕宽度
      */
     public static int getScreenWidth() {
-        return FodBaseApplication.getContext().getResources().getDisplayMetrics().widthPixels;
+        WindowManager wm = (WindowManager) FodBaseApplication.getContext().getSystemService(Context.WINDOW_SERVICE);
+        if (wm == null) {
+            return 0;
+        }
+        Point point = new Point();
+        wm.getDefaultDisplay().getRealSize(point);
+        return point.x;
     }
 
     /**
      * 屏幕高度
      */
     public static int getScreenHeight() {
+        WindowManager wm = (WindowManager) FodBaseApplication.getContext().getSystemService(Context.WINDOW_SERVICE);
+        if (wm == null) {
+            return 0;
+        }
+        Point point = new Point();
+        wm.getDefaultDisplay().getRealSize(point);
+        return point.y;
+    }
+
+    /**
+     * 应用宽度
+     */
+    public static int getAppWidth() {
+        return FodBaseApplication.getContext().getResources().getDisplayMetrics().widthPixels;
+    }
+
+    /**
+     * 应用高度
+     */
+    public static int getAppHeight() {
         return FodBaseApplication.getContext().getResources().getDisplayMetrics().heightPixels;
     }
 
@@ -99,14 +127,18 @@ public class DeviceUtil {
      * 屏幕尺寸
      */
     public static String getScreenSize() {
-        return getScreenHeight() + "*" + getScreenWidth();
+        int screenWidth = getScreenWidth();
+        int screenHeight = getScreenHeight();
+        int width = screenWidth == 0 ? getAppWidth() : screenWidth;
+        int height = screenHeight == 0 ? getAppHeight() : screenHeight;
+        return width + "*" + height;
     }
 
     /**
      * 设备型号
      */
     public static String getPhoneModel() {
-        return android.os.Build.MANUFACTURER + " " + android.os.Build.MODEL;
+        return android.os.Build.MANUFACTURER + "-" + android.os.Build.MODEL;
     }
 
     /**
