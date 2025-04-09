@@ -11,7 +11,6 @@ import com.fodsdk.utils.CipherUtil;
 import com.fodsdk.utils.DeviceUtil;
 import com.fodsdk.core.FodCallback;
 import com.fodsdk.utils.ToastUtil;
-import com.fodsdk.utils.UrlUtil;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
@@ -74,8 +73,8 @@ public class FodRepository {
             String json = gson.toJson(config);
             Map<String, String> map = gson.fromJson(json, Map.class);
             map.put("account", account);
-            map.put("password", UrlUtil.urlEncode(rsaRegisterPassword));
-            map.put("confirm_password", UrlUtil.urlEncode(rsaConfirmPassword));
+            map.put("password", rsaRegisterPassword);
+            map.put("confirm_password", rsaConfirmPassword);
             packParams(map);
             showLoading();
             FodNet.post(new ApiRegisterByAccount(), map, new FodNet.Callback() {
@@ -179,9 +178,9 @@ public class FodRepository {
         map.put("imei", DeviceUtil.getImei());
         map.put("oaid", DeviceUtil.getOaId());
         map.put("androidid", DeviceUtil.getAndroidId());
-        map.put("mno", UrlUtil.urlEncode(DeviceUtil.getNetworkOperatorName()));
-        map.put("nm", UrlUtil.urlEncode(DeviceUtil.getNetworkType()));
-        map.put("dev", UrlUtil.urlEncode(DeviceUtil.getPhoneModel()));
+        map.put("mno", DeviceUtil.getNetworkOperatorName());
+        map.put("nm", DeviceUtil.getNetworkType());
+        map.put("dev", DeviceUtil.getPhoneModel());
         map.put("screen", DeviceUtil.getScreenSize());
         map.put("osver", DeviceUtil.getOsVersion());
         map.put("appver", AppUtil.getAppVersionName());
