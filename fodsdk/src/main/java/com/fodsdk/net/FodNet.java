@@ -1,6 +1,7 @@
 package com.fodsdk.net;
 
 import android.content.Context;
+import android.net.Uri;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -21,7 +22,7 @@ public class FodNet {
     }
 
     public static void post(FodBaseApi api, Map<String, String> map, Callback callback) {
-        StringRequest postRequest = new StringRequest(
+        StringRequest request = new StringRequest(
                 Request.Method.POST,
                 api.getUrl(),
                 new Response.Listener<String>() {
@@ -47,7 +48,37 @@ public class FodNet {
                 return map;
             }
         };
-        queue.add(postRequest);
+        queue.add(request);
+    }
+
+    public static void get(FodBaseApi api, Map<String, String> map, Callback callback) {
+        Uri.Builder builder = Uri.parse(api.getUrl()).buildUpon();
+        for (Map.Entry<String, String> entry : map.entrySet()) {
+            builder.appendQueryParameter(entry.getKey(), entry.getValue());
+        }
+        String url = builder.toString();
+        LogUtil.v("================================");
+        LogUtil.e("GET request: " + url);
+        LogUtil.v("================================");
+        StringRequest request = new StringRequest(
+                Request.Method.GET,
+                url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        LogUtil.v("GET response: " + response);
+                        LogUtil.v("================================");
+                        callback.onResponse(response);
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        callback.onError(error);
+                    }
+                }
+        );
+        queue.add(request);
     }
 
     public interface Callback {
