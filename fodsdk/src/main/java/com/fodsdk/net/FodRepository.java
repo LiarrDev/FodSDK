@@ -11,6 +11,7 @@ import com.fodsdk.utils.CipherUtil;
 import com.fodsdk.utils.DeviceUtil;
 import com.fodsdk.core.FodCallback;
 import com.fodsdk.utils.ToastUtil;
+import com.fodsdk.utils.UrlUtil;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
@@ -66,18 +67,15 @@ public class FodRepository {
         }
     }
 
-    public void accountLogin(String account, String password) {
-    }
-
     public void accountRegister(String account, String registerPassword, String confirmPassword) {
-        String rsaRegisterPassword = CipherUtil.encrypt(registerPassword);
-        String rsaConfirmPassword = CipherUtil.encrypt(confirmPassword);
         try {
+            String rsaRegisterPassword = CipherUtil.encrypt(registerPassword);
+            String rsaConfirmPassword = CipherUtil.encrypt(confirmPassword);
             String json = gson.toJson(config);
             Map<String, String> map = gson.fromJson(json, Map.class);
             map.put("account", account);
-            map.put("password", rsaRegisterPassword);
-            map.put("confirm_password", rsaConfirmPassword);
+            map.put("password", UrlUtil.urlEncode(rsaRegisterPassword));
+            map.put("confirm_password", UrlUtil.urlEncode(rsaConfirmPassword));
             packParams(map);
             showLoading();
             FodNet.post(new ApiRegisterByAccount(), map, new FodNet.Callback() {
@@ -86,19 +84,18 @@ public class FodRepository {
                     hideLoading();
                     try {
                         JSONObject rsp = new JSONObject(response);
-
+                        boolean status = rsp.optBoolean("status");
+                        if (status) {
+                            // TODO
+                        } else {
+                            ToastUtil.show(rsp.optString("data"));
+                        }
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                    /*boolean status = response.optBoolean("status");
-                    if (status) {
-                        // TODO
-                    } else {
-                        ToastUtil.show(response.optString("data"));
-                    }*/
                 }
             });
-        } catch (JsonSyntaxException e) {
+        } catch (Exception e) {
             ToastUtil.show("参数错误");
             e.printStackTrace();
         }
@@ -159,6 +156,9 @@ public class FodRepository {
         }
     }
 
+    public void accountLogin(String account, String password) {
+    }
+
     private void showLoading() {
         loading = new FodLoadingDialog(ActivityUtil.getTopActivity());
         loading.show();
@@ -179,8 +179,9 @@ public class FodRepository {
         map.put("imei", DeviceUtil.getImei());
         map.put("oaid", DeviceUtil.getOaId());
         map.put("androidid", DeviceUtil.getAndroidId());
-        map.put("mno", DeviceUtil.getNetworkOperatorName());
-        map.put("nm", DeviceUtil.getNetworkType());
+        map.put("mno", UrlUtil.urlEncode(DeviceUtil.getNetworkOperatorName()));
+        map.put("nm", UrlUtil.urlEncode(DeviceUtil.getNetworkType()));
+        map.put("dev", UrlUtil.urlEncode(DeviceUtil.getPhoneModel()));
         map.put("screen", DeviceUtil.getScreenSize());
         map.put("osver", DeviceUtil.getOsVersion());
         map.put("appver", AppUtil.getAppVersionName());

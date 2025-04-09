@@ -26,14 +26,14 @@ public class CipherUtil {
 
     public static String encrypt(String data) {
         try {
-            byte[] decodedKey = Base64.decode(PUBLIC_KEY, Base64.DEFAULT);
+            byte[] decodedKey = Base64.decode(PUBLIC_KEY, Base64.NO_WRAP);
             X509EncodedKeySpec spec = new X509EncodedKeySpec(decodedKey);
             KeyFactory keyFactory = KeyFactory.getInstance("RSA");
             PublicKey pubKey = keyFactory.generatePublic(spec);
-            Cipher cipher = Cipher.getInstance("RSA");
+            Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
             cipher.init(Cipher.ENCRYPT_MODE, pubKey);
             byte[] encryptedData = cipher.doFinal(data.getBytes());
-            return Base64.encodeToString(encryptedData, Base64.DEFAULT);
+            return Base64.encodeToString(encryptedData, Base64.NO_WRAP);
         } catch (
                 NoSuchPaddingException | IllegalBlockSizeException | NoSuchAlgorithmException |
                 InvalidKeySpecException | BadPaddingException | InvalidKeyException e) {
