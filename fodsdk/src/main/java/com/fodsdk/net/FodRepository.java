@@ -1,6 +1,5 @@
 package com.fodsdk.net;
 
-import android.text.TextUtils;
 import android.util.Pair;
 
 import com.fodsdk.entities.FodGameConfig;
@@ -9,6 +8,7 @@ import com.fodsdk.net.api.ApiGetMessage;
 import com.fodsdk.net.api.ApiInit;
 import com.fodsdk.net.api.ApiRegisterByAccount;
 import com.fodsdk.net.api.ApiRegisterByPhone;
+import com.fodsdk.net.response.AccountRegisterResponse;
 import com.fodsdk.net.response.InitResponse;
 import com.fodsdk.ui.FodLoadingDialog;
 import com.fodsdk.ui.FodTipsDialog;
@@ -33,6 +33,12 @@ public class FodRepository {
     private FodGameConfig config;
     private FodLoadingDialog loading;
 
+    /**
+     * 初始化
+     *
+     * @param config   fod_game_config.json 的配置
+     * @param callback Pair 第一个参数为是否初始化成功，第二个参数为是否显示悬浮球
+     */
     public void init(FodGameConfig config, FodCallback<Pair<Boolean, Boolean>> callback) {
         this.config = config;
         try {
@@ -91,26 +97,20 @@ public class FodRepository {
                         JSONObject rsp = new JSONObject(response);
                         boolean status = rsp.optBoolean("status");
                         if (status) {
-                            FodUser user = new FodUser();
                             JSONObject data = rsp.optJSONObject("data");
                             if (data != null) {
-                                user.setAccount(data.optString("account"));
-                                user.setUid(data.optString("uid"));
-                                user.setToken(data.optString("token"));
-                                user.setPhone(data.optString("phone"));
+                                AccountRegisterResponse registerResponse = gson.fromJson(data.toString(), AccountRegisterResponse.class);
+                                FodUser user = new FodUser();
+                                user.setAccount(registerResponse.getAccount());
+                                user.setUid(registerResponse.getUid());
+                                user.setToken(registerResponse.getToken());
+                                user.setPhone(registerResponse.getPhone());
+                                user.setRealName(registerResponse.getRealInfo().getIsRealName() == 1);
 
-                                JSONObject realInfo = data.optJSONObject("real_info");
-                                if (realInfo != null) {
-                                    int realInfoStatus = realInfo.optInt("status");
-                                    int isForceRealName = realInfo.optInt("is_force_real_name");
-                                    String url = realInfo.optString("url");
-                                    String msg = realInfo.optString("msg");
-                                    int isRealName = realInfo.optInt("is_real_name");
-                                    user.setRealName(isRealName == 1);
-                                    if (!TextUtils.isEmpty(msg)) {
-                                        ToastUtil.show(msg);
-                                    }
-                                }
+                                String msg = registerResponse.getRealInfo().getMsg();
+                                ToastUtil.show(msg);
+
+                                // TODO: 回调，弹出实名弹窗
                             }
                         } else {
                             ToastUtil.show(rsp.optString("data"));

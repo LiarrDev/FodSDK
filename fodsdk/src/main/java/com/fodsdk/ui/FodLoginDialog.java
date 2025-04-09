@@ -65,6 +65,7 @@ public class FodLoginDialog extends FodBaseDialog {
         btnAccountRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                hideSoftKeyBoard(v);
                 etRegisterAccount.clearFocus();
                 etConfirmPassword.clearFocus();
                 etRegisterPassword.clearFocus();
