@@ -5,6 +5,11 @@ import android.util.Pair;
 
 import com.fodsdk.entities.FodGameConfig;
 import com.fodsdk.entities.FodUser;
+import com.fodsdk.net.api.ApiGetMessage;
+import com.fodsdk.net.api.ApiInit;
+import com.fodsdk.net.api.ApiRegisterByAccount;
+import com.fodsdk.net.api.ApiRegisterByPhone;
+import com.fodsdk.net.response.InitResponse;
 import com.fodsdk.ui.FodLoadingDialog;
 import com.fodsdk.ui.FodTipsDialog;
 import com.fodsdk.utils.ActivityUtil;
@@ -45,13 +50,12 @@ public class FodRepository {
                                 callback.onValue(new Pair<>(false, false));
                                 return;
                             }
-                            JSONObject floatWindow = data.optJSONObject("float_window_status");
-                            if (floatWindow == null) {
-                                callback.onValue(new Pair<>(false, false));
-                                return;
+                            InitResponse initResponse = gson.fromJson(data.toString(), InitResponse.class);
+                            boolean showFloat = false;
+                            if (initResponse != null) {
+                                showFloat = initResponse.getFloatWindowStatus().isStatus();
                             }
-                            boolean showFloating = floatWindow.optBoolean("status");
-                            callback.onValue(new Pair<>(true, showFloating));
+                            callback.onValue(new Pair<>(true, showFloat));
                         } else {
                             ToastUtil.show(rsp.optString("data"));
                             callback.onValue(new Pair<>(false, false));

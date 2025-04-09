@@ -1,4 +1,4 @@
-package com.fodsdk.net;
+package com.fodsdk.net.api;
 
 import com.fodsdk.core.FodConstants;
 

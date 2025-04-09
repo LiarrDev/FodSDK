@@ -4,7 +4,7 @@ import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
 
-import com.fodsdk.net.FodBaseApi;
+import com.fodsdk.net.api.FodBaseApi;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
