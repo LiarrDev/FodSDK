@@ -1,8 +1,10 @@
 package com.fodsdk.net;
 
+import android.text.TextUtils;
 import android.util.Pair;
 
 import com.fodsdk.entities.FodGameConfig;
+import com.fodsdk.entities.FodUser;
 import com.fodsdk.ui.FodLoadingDialog;
 import com.fodsdk.ui.FodTipsDialog;
 import com.fodsdk.utils.ActivityUtil;
@@ -85,7 +87,27 @@ public class FodRepository {
                         JSONObject rsp = new JSONObject(response);
                         boolean status = rsp.optBoolean("status");
                         if (status) {
-                            // TODO
+                            FodUser user = new FodUser();
+                            JSONObject data = rsp.optJSONObject("data");
+                            if (data != null) {
+                                user.setAccount(data.optString("account"));
+                                user.setUid(data.optString("uid"));
+                                user.setToken(data.optString("token"));
+                                user.setPhone(data.optString("phone"));
+
+                                JSONObject realInfo = data.optJSONObject("real_info");
+                                if (realInfo != null) {
+                                    int realInfoStatus = realInfo.optInt("status");
+                                    int isForceRealName = realInfo.optInt("is_force_real_name");
+                                    String url = realInfo.optString("url");
+                                    String msg = realInfo.optString("msg");
+                                    int isRealName = realInfo.optInt("is_real_name");
+                                    user.setRealName(isRealName == 1);
+                                    if (!TextUtils.isEmpty(msg)) {
+                                        ToastUtil.show(msg);
+                                    }
+                                }
+                            }
                         } else {
                             ToastUtil.show(rsp.optString("data"));
                         }
