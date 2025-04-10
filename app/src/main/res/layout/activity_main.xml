@@ -25,22 +25,16 @@
             android:text="登录" />
 
         <Button
-            android:id="@+id/btn_switch_account"
+            android:id="@+id/btn_logout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="切换账号" />
+            android:text="登出" />
 
         <Button
             android:id="@+id/btn_pay"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="支付" />
-
-        <Button
-            android:id="@+id/btn_logout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="注销" />
 
         <Button
             android:id="@+id/btn_exit"

@@ -268,6 +268,7 @@ public class FodRepository {
         map.put("osver", DeviceUtil.getOsVersion());
         map.put("appver", AppUtil.getAppVersionName());
         map.put("devtype", "android");
+        map.put("os", "android");
     }
 
     public FodGameConfig getGameConfig() {

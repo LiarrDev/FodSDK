@@ -134,7 +134,10 @@ public abstract class FodSDKCore {
     }
 
     public void logout() {
-
+        ball.hide(activity);
+        user = null;
+        GlobalSettings.setLastLoginToken("");
+        platformCallback.onLogout(FodConstants.Code.SUCCESS, new Bundle());
     }
 
     public void pay() {
