@@ -1,10 +1,12 @@
 package com.fodsdk.ui.view;
 
+import android.app.Activity;
+
 public interface IFloatingView {
 
-    void show();
+    void show(Activity activity);
 
-    void hide();
+    void hide(Activity activity);
 
     boolean isShowing();
 }

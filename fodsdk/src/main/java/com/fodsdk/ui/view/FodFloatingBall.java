@@ -10,7 +10,6 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ImageView;
 
-import com.fodsdk.utils.ActivityUtil;
 import com.fodsdk.utils.DeviceUtil;
 import com.fodsdk.utils.ResourceUtil;
 
@@ -22,8 +21,7 @@ public class FodFloatingBall implements IFloatingView {
     private View.OnClickListener listener;
 
     @Override
-    public void show() {
-        Activity activity = ActivityUtil.getTopActivity();
+    public void show(Activity activity) {
         if (activity != null && !isShowing) {
             WindowManager windowManager = (WindowManager) activity.getSystemService(Context.WINDOW_SERVICE);
             floatingRoot = LayoutInflater.from(activity).inflate(ResourceUtil.getLayoutId("fod_floating_ball"), null);
@@ -42,9 +40,8 @@ public class FodFloatingBall implements IFloatingView {
     }
 
     @Override
-    public void hide() {
+    public void hide(Activity activity) {
         if (floatingRoot != null) {
-            Activity activity = ActivityUtil.getTopActivity();
             if (activity != null) {
                 WindowManager windowManager = (WindowManager) activity.getSystemService(Context.WINDOW_SERVICE);
                 windowManager.removeView(floatingRoot);

@@ -8,6 +8,7 @@ import android.view.View;
 import com.fodsdk.core.FodSDK;
 import com.fodsdk.core.IPlatformCallback;
 import com.fodsdk.ui.FodUserCenterDialog;
+import com.fodsdk.ui.FodWebDialog;
 import com.fodsdk.ui.view.FodFloatingBall;
 
 public class MainActivity extends Activity implements View.OnClickListener {
@@ -51,6 +52,10 @@ public class MainActivity extends Activity implements View.OnClickListener {
         } else if (view.getId() == R.id.btn_login) {
             FodSDK.get().login();
         } else if (view.getId() == R.id.btn_user_center) {
+            FodWebDialog dialog = new FodWebDialog(this,"https://baidu.com");
+            dialog.setCancelable(false);
+            dialog.setCanceledOnTouchOutside(false);
+            dialog.show();
         } else if (view.getId() == R.id.btn_float_ball) {
             FodFloatingBall ball = new FodFloatingBall();
             ball.setOnClickListener(new View.OnClickListener() {
@@ -60,7 +65,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                     dialog.show();
                 }
             });
-            ball.show();
+            ball.show(this);
         }
     }
 

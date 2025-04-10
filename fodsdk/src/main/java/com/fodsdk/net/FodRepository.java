@@ -3,7 +3,6 @@ package com.fodsdk.net;
 import android.util.Pair;
 
 import com.fodsdk.entities.FodGameConfig;
-import com.fodsdk.entities.FodUser;
 import com.fodsdk.net.api.ApiGetMessage;
 import com.fodsdk.net.api.ApiInit;
 import com.fodsdk.net.api.ApiRegisterByAccount;
@@ -78,7 +77,7 @@ public class FodRepository {
         }
     }
 
-    public void accountRegister(String account, String registerPassword, String confirmPassword) {
+    public void accountRegister(String account, String registerPassword, String confirmPassword,FodCallback<AccountRegisterResponse> callback) {
         try {
             String rsaRegisterPassword = CipherUtil.encrypt(registerPassword);
             String rsaConfirmPassword = CipherUtil.encrypt(confirmPassword);
@@ -100,17 +99,7 @@ public class FodRepository {
                             JSONObject data = rsp.optJSONObject("data");
                             if (data != null) {
                                 AccountRegisterResponse registerResponse = gson.fromJson(data.toString(), AccountRegisterResponse.class);
-                                FodUser user = new FodUser();
-                                user.setAccount(registerResponse.getAccount());
-                                user.setUid(registerResponse.getUid());
-                                user.setToken(registerResponse.getToken());
-                                user.setPhone(registerResponse.getPhone());
-                                user.setRealName(registerResponse.getRealInfo().getIsRealName() == 1);
-
-                                String msg = registerResponse.getRealInfo().getMsg();
-                                ToastUtil.show(msg);
-
-                                // TODO: 回调，弹出实名弹窗
+                                callback.onValue(registerResponse);
                             }
                         } else {
                             ToastUtil.show(rsp.optString("data"));

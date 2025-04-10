@@ -8,7 +8,9 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
+import com.fodsdk.core.FodCallback;
 import com.fodsdk.net.FodRepository;
+import com.fodsdk.net.response.AccountRegisterResponse;
 import com.fodsdk.utils.ResourceUtil;
 import com.fodsdk.utils.ToastUtil;
 
@@ -22,6 +24,7 @@ public class FodLoginDialog extends FodBaseDialog {
     private Button btnAccountLogin, btnAccountRegister, btnGetSms, btnSmsLogin;
     private TextView tvAccountRegister, tvAccountLogin;
     private final FodRepository repo;
+    private FodCallback<AccountRegisterResponse> registerCallback;
 
     public FodLoginDialog(Context context, FodRepository repo) {
         super(context);
@@ -117,7 +120,7 @@ public class FodLoginDialog extends FodBaseDialog {
             ToastUtil.show("两次输入的密码不一致");
             return;
         }
-        repo.accountRegister(account, registerPassword, confirmPassword);
+        repo.accountRegister(account, registerPassword, confirmPassword, registerCallback);
     }
 
     private void getSmsCode() {
@@ -189,5 +192,9 @@ public class FodLoginDialog extends FodBaseDialog {
         etSmsCode = rootView.findViewById(ResourceUtil.getViewId("et_sms_code"));
         btnGetSms = rootView.findViewById(ResourceUtil.getViewId("btn_get_sms"));
         btnSmsLogin = rootView.findViewById(ResourceUtil.getViewId("btn_sms_login"));
+    }
+
+    public void setOnRegisterCallback(FodCallback<AccountRegisterResponse> callback) {
+        registerCallback = callback;
     }
 }
