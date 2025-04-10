@@ -7,8 +7,8 @@ import android.util.Pair;
 import com.fodsdk.entities.FodGameConfig;
 import com.fodsdk.entities.FodUser;
 import com.fodsdk.net.FodRepository;
-import com.fodsdk.net.response.AccountRegisterRealInfo;
-import com.fodsdk.net.response.AccountRegisterResponse;
+import com.fodsdk.net.response.LoginRealInfo;
+import com.fodsdk.net.response.LoginResponse;
 import com.fodsdk.settings.GlobalSettings;
 import com.fodsdk.settings.UserSettings;
 import com.fodsdk.ui.FodLoginDialog;
@@ -70,9 +70,9 @@ public abstract class FodSDKCore {
 
     public void login() {
         FodLoginDialog dialog = new FodLoginDialog(activity, repo);
-        dialog.setOnRegisterCallback(new FodCallback<AccountRegisterResponse>() {
+        dialog.setOnLoginCallback(new FodCallback<LoginResponse>() {
             @Override
-            public void onValue(AccountRegisterResponse response) {
+            public void onValue(LoginResponse response) {
                 user = new FodUser();
                 user.setAccount(response.getAccount());
                 user.setUid(response.getUid());
@@ -96,8 +96,8 @@ public abstract class FodSDKCore {
         dialog.show();
     }
 
-    private void showRealNameDialog(AccountRegisterResponse response) {
-        AccountRegisterRealInfo realInfo = response.getRealInfo();
+    private void showRealNameDialog(LoginResponse response) {
+        LoginRealInfo realInfo = response.getRealInfo();
         if (realInfo.getIsRealName() == 0) {
             UserSettings.setTodayAllowPlayTime(realInfo.getTime());
             String msg = realInfo.getMsg();

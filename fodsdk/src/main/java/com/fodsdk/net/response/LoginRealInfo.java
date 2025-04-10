@@ -2,7 +2,7 @@ package com.fodsdk.net.response;
 
 import com.google.gson.annotations.SerializedName;
 
-public class AccountRegisterRealInfo {
+public class LoginRealInfo {
     @SerializedName("status")
     private int status;
     @SerializedName("is_force_real_name")

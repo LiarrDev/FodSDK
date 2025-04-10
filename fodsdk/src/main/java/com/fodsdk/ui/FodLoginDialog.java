@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import com.fodsdk.core.FodCallback;
 import com.fodsdk.net.FodRepository;
-import com.fodsdk.net.response.AccountRegisterResponse;
+import com.fodsdk.net.response.LoginResponse;
 import com.fodsdk.utils.ResourceUtil;
 import com.fodsdk.utils.ToastUtil;
 
@@ -24,7 +24,7 @@ public class FodLoginDialog extends FodBaseDialog {
     private Button btnAccountLogin, btnAccountRegister, btnGetSms, btnSmsLogin;
     private TextView tvAccountRegister, tvAccountLogin;
     private final FodRepository repo;
-    private FodCallback<AccountRegisterResponse> registerCallback;
+    private FodCallback<LoginResponse> loginCallback;
 
     public FodLoginDialog(Context context, FodRepository repo) {
         super(context);
@@ -105,7 +105,7 @@ public class FodLoginDialog extends FodBaseDialog {
             ToastUtil.show("账号或密码长度不能小于 6 位");
             return;
         }
-        repo.accountLogin(account, password);
+        repo.accountLogin(account, password, loginCallback);
     }
 
     private void doAccountRegister() {
@@ -120,7 +120,7 @@ public class FodLoginDialog extends FodBaseDialog {
             ToastUtil.show("两次输入的密码不一致");
             return;
         }
-        repo.accountRegister(account, registerPassword, confirmPassword, registerCallback);
+        repo.accountRegister(account, registerPassword, confirmPassword, loginCallback);
     }
 
     private void getSmsCode() {
@@ -194,7 +194,7 @@ public class FodLoginDialog extends FodBaseDialog {
         btnSmsLogin = rootView.findViewById(ResourceUtil.getViewId("btn_sms_login"));
     }
 
-    public void setOnRegisterCallback(FodCallback<AccountRegisterResponse> callback) {
-        registerCallback = callback;
+    public void setOnLoginCallback(FodCallback<LoginResponse> callback) {
+        loginCallback = callback;
     }
 }

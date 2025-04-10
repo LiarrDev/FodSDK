@@ -2,7 +2,7 @@ package com.fodsdk.net.response;
 
 import com.google.gson.annotations.SerializedName;
 
-public class AccountRegisterResponse {
+public class LoginResponse {
     @SerializedName("token")
     private String token;
     @SerializedName("uid")
@@ -18,7 +18,7 @@ public class AccountRegisterResponse {
     @SerializedName("is_report_medium")
     private int isReportMedium;
     @SerializedName("real_info")
-    private AccountRegisterRealInfo realInfo;
+    private LoginRealInfo realInfo;
 
     public String getToken() {
         return token;
@@ -76,11 +76,11 @@ public class AccountRegisterResponse {
         this.isReportMedium = isReportMedium;
     }
 
-    public AccountRegisterRealInfo getRealInfo() {
+    public LoginRealInfo getRealInfo() {
         return realInfo;
     }
 
-    public void setRealInfo(AccountRegisterRealInfo realInfo) {
+    public void setRealInfo(LoginRealInfo realInfo) {
         this.realInfo = realInfo;
     }
 

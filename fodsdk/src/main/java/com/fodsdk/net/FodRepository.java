@@ -5,9 +5,10 @@ import android.util.Pair;
 import com.fodsdk.entities.FodGameConfig;
 import com.fodsdk.net.api.ApiGetMessage;
 import com.fodsdk.net.api.ApiInit;
+import com.fodsdk.net.api.ApiLogin;
 import com.fodsdk.net.api.ApiRegisterByAccount;
 import com.fodsdk.net.api.ApiRegisterByPhone;
-import com.fodsdk.net.response.AccountRegisterResponse;
+import com.fodsdk.net.response.LoginResponse;
 import com.fodsdk.net.response.InitResponse;
 import com.fodsdk.ui.FodLoadingDialog;
 import com.fodsdk.ui.FodTipsDialog;
@@ -77,7 +78,7 @@ public class FodRepository {
         }
     }
 
-    public void accountRegister(String account, String registerPassword, String confirmPassword,FodCallback<AccountRegisterResponse> callback) {
+    public void accountRegister(String account, String registerPassword, String confirmPassword, FodCallback<LoginResponse> callback) {
         try {
             String rsaRegisterPassword = CipherUtil.encrypt(registerPassword);
             String rsaConfirmPassword = CipherUtil.encrypt(confirmPassword);
@@ -92,25 +93,58 @@ public class FodRepository {
                 @Override
                 public void onResponse(String response) {
                     hideLoading();
-                    try {
-                        JSONObject rsp = new JSONObject(response);
-                        boolean status = rsp.optBoolean("status");
-                        if (status) {
-                            JSONObject data = rsp.optJSONObject("data");
-                            if (data != null) {
-                                AccountRegisterResponse registerResponse = gson.fromJson(data.toString(), AccountRegisterResponse.class);
-                                callback.onValue(registerResponse);
-                            }
-                        } else {
-                            ToastUtil.show(rsp.optString("data"));
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
+                    handleLogin(response, callback);
+                }
+
+                @Override
+                public void onError(Exception e) {
+                    FodNet.Callback.super.onError(e);
+                    hideLoading();
                 }
             });
         } catch (Exception e) {
             ToastUtil.show("参数错误");
+            e.printStackTrace();
+        }
+    }
+
+    public void accountLogin(String account, String password, FodCallback<LoginResponse> callback) {
+        String json = gson.toJson(config);
+        Map<String, String> map = gson.fromJson(json, Map.class);
+        map.put("login_type", "1");
+        map.put("account", account);
+        map.put("password", CipherUtil.encrypt(password));
+        packParams(map);
+        showLoading();
+        FodNet.post(new ApiLogin(), map, new FodNet.Callback() {
+            @Override
+            public void onResponse(String response) {
+                hideLoading();
+                handleLogin(response, callback);
+            }
+
+            @Override
+            public void onError(Exception e) {
+                FodNet.Callback.super.onError(e);
+                hideLoading();
+            }
+        });
+    }
+
+    private void handleLogin(String response, FodCallback<LoginResponse> callback) {
+        try {
+            JSONObject rsp = new JSONObject(response);
+            boolean status = rsp.optBoolean("status");
+            if (status) {
+                JSONObject data = rsp.optJSONObject("data");
+                if (data != null) {
+                    LoginResponse registerResponse = gson.fromJson(data.toString(), LoginResponse.class);
+                    callback.onValue(registerResponse);
+                }
+            } else {
+                ToastUtil.show(rsp.optString("data"));
+            }
+        } catch (JSONException e) {
             e.printStackTrace();
         }
     }
@@ -168,9 +202,6 @@ public class FodRepository {
             ToastUtil.show("参数错误");
             e.printStackTrace();
         }
-    }
-
-    public void accountLogin(String account, String password) {
     }
 
     private void showLoading() {
