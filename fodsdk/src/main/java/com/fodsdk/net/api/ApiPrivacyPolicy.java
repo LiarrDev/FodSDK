@@ -4,11 +4,11 @@ import android.net.Uri;
 
 import com.fodsdk.entities.FodGameConfig;
 
-public class ApiGetReivarcyUrl extends FodBaseUserApi {
+public class ApiPrivacyPolicy extends FodBaseUserApi {
 
     private final FodGameConfig config;
 
-    public ApiGetReivarcyUrl(FodGameConfig config) {
+    public ApiPrivacyPolicy(FodGameConfig config) {
         super("ApiGetReivarcyUrl.php");
         this.config = config;
     }

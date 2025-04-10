@@ -4,11 +4,11 @@ import android.net.Uri;
 
 import com.fodsdk.entities.FodGameConfig;
 
-public class ApiGetAgreement extends FodBaseUserApi {
+public class ApiUserAgreement extends FodBaseUserApi {
 
     private final FodGameConfig config;
 
-    public ApiGetAgreement(FodGameConfig config) {
+    public ApiUserAgreement(FodGameConfig config) {
         super("ApiGetAgreement.php");
         this.config = config;
     }

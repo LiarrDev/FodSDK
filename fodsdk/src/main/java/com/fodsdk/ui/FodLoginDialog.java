@@ -1,6 +1,12 @@
 package com.fodsdk.ui;
 
 import android.content.Context;
+import android.text.Html;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
+import android.text.method.LinkMovementMethod;
+import android.text.style.ClickableSpan;
+import android.text.style.URLSpan;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -11,6 +17,7 @@ import android.widget.TextView;
 
 import com.fodsdk.core.FodCallback;
 import com.fodsdk.net.FodRepository;
+import com.fodsdk.net.api.ApiUserAgreement;
 import com.fodsdk.net.response.LoginResponse;
 import com.fodsdk.utils.ResourceUtil;
 import com.fodsdk.utils.ToastUtil;
@@ -36,6 +43,8 @@ public class FodLoginDialog extends FodBaseDialog {
     @Override
     protected void initViews(View rootView) {
         initComponents(rootView);
+        initCheckbox();
+
         radioGroup.setOnCheckedChangeListener((new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
@@ -219,5 +228,50 @@ public class FodLoginDialog extends FodBaseDialog {
 
     public void setOnLoginCallback(FodCallback<LoginResponse> callback) {
         loginCallback = callback;
+    }
+
+    private void initCheckbox() {
+        String userAgreement = new ApiUserAgreement(repo.getGameConfig()).getUrl();
+        String privacyPolicy = new ApiUserAgreement(repo.getGameConfig()).getUrl();
+        Spanned cbText = Html.fromHtml("我已同意《<a href='" + userAgreement + "'>用户协议</a>》和《<a href='" + privacyPolicy + "'>隐私政策</a>》", Html.FROM_HTML_MODE_LEGACY);
+        cbLoginAgreement.setText(cbText);
+        handleCheckBoxClick(cbLoginAgreement);
+        cbMobileAgreement.setText(cbText);
+        handleCheckBoxClick(cbMobileAgreement);
+        cbRegisterAgreement.setText(cbText);
+        handleCheckBoxClick(cbRegisterAgreement);
+    }
+
+    private void handleCheckBoxClick(CheckBox checkBox) {
+        checkBox.setMovementMethod(LinkMovementMethod.getInstance());
+        Spanned text = (Spanned) checkBox.getText();
+        URLSpan[] urls = text.getSpans(0, text.length(), URLSpan.class);
+        SpannableStringBuilder sb = new SpannableStringBuilder(text);
+        sb.clearSpans();
+        for (URLSpan span : urls) {
+            sb.setSpan(
+                    new HyperlinkSpan(span.getURL()),
+                    text.getSpanStart(span),
+                    text.getSpanEnd(span),
+                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+            );
+        }
+        checkBox.setText(sb);
+    }
+
+
+    private static class HyperlinkSpan extends ClickableSpan {
+
+        private final String url;
+
+        public HyperlinkSpan(String url) {
+            this.url = url;
+        }
+
+        @Override
+        public void onClick(View widget) {
+            FodWebDialog dialog = new FodWebDialog(widget.getContext(), url);
+            dialog.show();
+        }
     }
 }
