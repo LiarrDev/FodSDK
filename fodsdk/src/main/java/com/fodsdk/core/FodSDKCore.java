@@ -2,6 +2,7 @@ package com.fodsdk.core;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Pair;
 
 import com.fodsdk.entities.FodGameConfig;
@@ -70,7 +71,7 @@ public abstract class FodSDKCore {
 
     public void login() {
         FodLoginDialog dialog = new FodLoginDialog(activity, repo);
-        dialog.setOnLoginCallback(new FodCallback<LoginResponse>() {
+        FodCallback<LoginResponse> callback = new FodCallback<LoginResponse>() {
             @Override
             public void onValue(LoginResponse response) {
                 user = new FodUser();
@@ -80,20 +81,40 @@ public abstract class FodSDKCore {
                 user.setPhone(response.getPhone());
                 user.setRealName(response.getRealInfo().getIsRealName() == 1);
 
+                GlobalSettings.setLastLoginToken(user.getToken());
+
                 // 回调给 CP
                 Bundle bundle = new Bundle();
                 bundle.putString("uid", user.getUid());
                 bundle.putString("token", user.getToken());
                 platformCallback.onLogin(FodConstants.Code.SUCCESS, bundle);
 
-                ball.show(activity);
-
-                dialog.dismiss();
-
+                if (showFloatingBall) {
+                    ball.show(activity);
+                }
+                if (dialog.isShowing()) {
+                    dialog.dismiss();
+                }
                 showRealNameDialog(response);
             }
-        });
-        dialog.show();
+        };
+        String token = GlobalSettings.getLastLoginToken();
+        if (TextUtils.isEmpty(token)) {
+            dialog.setOnLoginCallback(callback);
+            dialog.show();
+        } else {
+            repo.tokenLogin(token, new FodCallback<Pair<Boolean, LoginResponse>>() {
+                @Override
+                public void onValue(Pair<Boolean, LoginResponse> booleanLoginResponsePair) {
+                    if (booleanLoginResponsePair.first) {
+                        callback.onValue(booleanLoginResponsePair.second);
+                    } else {
+                        dialog.setOnLoginCallback(callback);
+                        dialog.show();
+                    }
+                }
+            });
+        }
     }
 
     private void showRealNameDialog(LoginResponse response) {

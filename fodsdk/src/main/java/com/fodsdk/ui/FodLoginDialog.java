@@ -53,6 +53,9 @@ public class FodLoginDialog extends FodBaseDialog {
         btnAccountLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                hideSoftKeyBoard(v);
+                etLoginAccount.clearFocus();
+                etLoginPassword.clearFocus();
                 doAccountLogin();
             }
         });
@@ -93,6 +96,9 @@ public class FodLoginDialog extends FodBaseDialog {
         btnSmsLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                hideSoftKeyBoard(v);
+                etMobile.clearFocus();
+                etSmsCode.clearFocus();
                 doSmsLogin();
             }
         });

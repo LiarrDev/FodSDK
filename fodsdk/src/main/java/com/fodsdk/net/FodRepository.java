@@ -131,6 +131,43 @@ public class FodRepository {
         });
     }
 
+    public void tokenLogin(String token, FodCallback<Pair<Boolean, LoginResponse>> callback) {
+        String json = gson.toJson(config);
+        Map<String, String> map = gson.fromJson(json, Map.class);
+        map.put("login_type", "3");
+        map.put("token", token);
+        packParams(map);
+        showLoading();
+        FodNet.post(new ApiLogin(), map, new FodNet.Callback() {
+            @Override
+            public void onResponse(String response) {
+                hideLoading();
+                try {
+                    JSONObject rsp = new JSONObject(response);
+                    boolean status = rsp.optBoolean("status");
+                    if (status) {
+                        JSONObject data = rsp.optJSONObject("data");
+                        if (data != null) {
+                            LoginResponse loginResponse = gson.fromJson(data.toString(), LoginResponse.class);
+                            callback.onValue(new Pair<>(true, loginResponse));
+                        }
+                    } else {
+                        ToastUtil.show(rsp.optString("data"));
+                        callback.onValue(new Pair<>(false, null));
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onError(Exception e) {
+                FodNet.Callback.super.onError(e);
+                hideLoading();
+            }
+        });
+    }
+
     private void handleLogin(String response, FodCallback<LoginResponse> callback) {
         try {
             JSONObject rsp = new JSONObject(response);
