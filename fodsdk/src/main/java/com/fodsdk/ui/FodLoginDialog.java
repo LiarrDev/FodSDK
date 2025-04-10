@@ -3,6 +3,7 @@ package com.fodsdk.ui;
 import android.content.Context;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -22,6 +23,7 @@ public class FodLoginDialog extends FodBaseDialog {
     private View accountLoginLayout, accountRegisterLayout, smsLoginLayout;
     private EditText etLoginAccount, etLoginPassword, etRegisterAccount, etRegisterPassword, etConfirmPassword, etMobile, etSmsCode;
     private Button btnAccountLogin, btnAccountRegister, btnGetSms, btnSmsLogin;
+    private CheckBox cbMobileAgreement, cbRegisterAgreement, cbLoginAgreement;  // TODO: 加载协议
     private TextView tvAccountRegister, tvAccountLogin;
     private final FodRepository repo;
     private FodCallback<LoginResponse> loginCallback;
@@ -105,6 +107,10 @@ public class FodLoginDialog extends FodBaseDialog {
     }
 
     private void doAccountLogin() {
+        if (!cbLoginAgreement.isChecked()) {
+            ToastUtil.show("请先同意用户协议");
+            return;
+        }
         String account = etLoginAccount.getText().toString();
         String password = etLoginPassword.getText().toString();
         if (account.length() < 6 || password.length() < 6) {
@@ -115,6 +121,10 @@ public class FodLoginDialog extends FodBaseDialog {
     }
 
     private void doAccountRegister() {
+        if (!cbRegisterAgreement.isChecked()) {
+            ToastUtil.show("请先同意用户协议");
+            return;
+        }
         String account = etRegisterAccount.getText().toString();
         String registerPassword = etRegisterPassword.getText().toString();
         String confirmPassword = etConfirmPassword.getText().toString();
@@ -139,6 +149,10 @@ public class FodLoginDialog extends FodBaseDialog {
     }
 
     private void doSmsLogin() {
+        if (!cbMobileAgreement.isChecked()) {
+            ToastUtil.show("请先同意用户协议");
+            return;
+        }
         String mobile = etMobile.getText().toString();
         String smsCode = etSmsCode.getText().toString();
         if (mobile.isEmpty()) {
@@ -184,6 +198,7 @@ public class FodLoginDialog extends FodBaseDialog {
         etLoginAccount = rootView.findViewById(ResourceUtil.getViewId("et_login_account"));
         etLoginPassword = rootView.findViewById(ResourceUtil.getViewId("et_login_password"));
         btnAccountLogin = rootView.findViewById(ResourceUtil.getViewId("btn_account_login"));
+        cbLoginAgreement = rootView.findViewById(ResourceUtil.getViewId("cb_login_agreement"));
         tvAccountRegister = rootView.findViewById(ResourceUtil.getViewId("tv_account_register"));
 
         accountRegisterLayout = rootView.findViewById(ResourceUtil.getViewId("layout_account_register"));
@@ -191,6 +206,7 @@ public class FodLoginDialog extends FodBaseDialog {
         etRegisterPassword = rootView.findViewById(ResourceUtil.getViewId("et_register_password"));
         etConfirmPassword = rootView.findViewById(ResourceUtil.getViewId("et_confirm_password"));
         btnAccountRegister = rootView.findViewById(ResourceUtil.getViewId("btn_account_register"));
+        cbRegisterAgreement = rootView.findViewById(ResourceUtil.getViewId("cb_register_agreement"));
         tvAccountLogin = rootView.findViewById(ResourceUtil.getViewId("tv_account_login"));
 
         smsLoginLayout = rootView.findViewById(ResourceUtil.getViewId("layout_sms_login"));
@@ -198,6 +214,7 @@ public class FodLoginDialog extends FodBaseDialog {
         etSmsCode = rootView.findViewById(ResourceUtil.getViewId("et_sms_code"));
         btnGetSms = rootView.findViewById(ResourceUtil.getViewId("btn_get_sms"));
         btnSmsLogin = rootView.findViewById(ResourceUtil.getViewId("btn_sms_login"));
+        cbMobileAgreement = rootView.findViewById(ResourceUtil.getViewId("cb_mobile_agreement"));
     }
 
     public void setOnLoginCallback(FodCallback<LoginResponse> callback) {

@@ -12,7 +12,7 @@
         android:id="@+id/et_login_account"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:layout_marginBottom="6dp"
         android:background="@drawable/fod_shape_radius_16_stroke_1"
         android:hint="账号"
@@ -38,6 +38,19 @@
         android:textColorHint="@color/fod_color_acacac"
         android:textSize="14dp"
         tools:text="asdfa" />
+
+    <CheckBox
+        android:id="@+id/cb_login_agreement"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginVertical="6dp"
+        android:button="@drawable/fod_selector_radio"
+        android:drawablePadding="8dp"
+        android:gravity="center"
+        android:text="我已同意《用户协议》和《隐私政策》"
+        android:textColor="@android:color/black"
+        android:textSize="14dp" />
 
     <Button
         android:id="@+id/btn_account_login"
