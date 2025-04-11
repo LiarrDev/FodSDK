@@ -6,6 +6,7 @@ import android.text.TextUtils;
 import android.util.Pair;
 
 import com.fodsdk.entities.FodGameConfig;
+import com.fodsdk.entities.FodPayEntity;
 import com.fodsdk.entities.FodUser;
 import com.fodsdk.net.FodRepository;
 import com.fodsdk.net.response.LoginRealInfo;
@@ -48,7 +49,7 @@ public abstract class FodSDKCore {
         repo.init(config, new FodCallback<Pair<Boolean, Boolean>>() {
             @Override
             public void onValue(Pair<Boolean, Boolean> pair) {
-                callback.onInit(pair.first, new Bundle());
+                callback.onInit(pair.first ? FodConstants.Code.SUCCESS : FodConstants.Code.FAILURE, new Bundle());
                 showFloatingBall = pair.second;
             }
         });
@@ -69,7 +70,7 @@ public abstract class FodSDKCore {
         }
     }
 
-    public void login() {
+    public void login(Activity activity) {
         FodLoginDialog dialog = new FodLoginDialog(activity, repo);
         FodCallback<LoginResponse> callback = new FodCallback<LoginResponse>() {
             @Override
@@ -95,7 +96,7 @@ public abstract class FodSDKCore {
                 if (dialog.isShowing()) {
                     dialog.dismiss();
                 }
-                showRealNameDialog(response);
+                showRealNameDialog(activity, response);
             }
         };
         String token = GlobalSettings.getLastLoginToken();
@@ -117,7 +118,10 @@ public abstract class FodSDKCore {
         }
     }
 
-    private void showRealNameDialog(LoginResponse response) {
+    private void showRealNameDialog(Activity activity, LoginResponse response) {
+        if (true) {
+            return; // TODO: test, remove this later
+        }
         LoginRealInfo realInfo = response.getRealInfo();
         if (realInfo.getIsRealName() == 0) {
             UserSettings.setTodayAllowPlayTime(realInfo.getTime());
@@ -133,15 +137,15 @@ public abstract class FodSDKCore {
         }
     }
 
-    public void logout() {
+    public void logout(Activity activity) {
         ball.hide(activity);
         user = null;
         GlobalSettings.setLastLoginToken("");
         platformCallback.onLogout(FodConstants.Code.SUCCESS, new Bundle());
     }
 
-    public void pay() {
-
+    public void pay(Activity activity, FodPayEntity entity) {
+        repo.pay(user, entity);
     }
 
     public FodUser getUser() {

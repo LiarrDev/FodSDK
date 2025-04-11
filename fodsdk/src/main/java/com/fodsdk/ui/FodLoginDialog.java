@@ -30,7 +30,7 @@ public class FodLoginDialog extends FodBaseDialog {
     private View accountLoginLayout, accountRegisterLayout, smsLoginLayout;
     private EditText etLoginAccount, etLoginPassword, etRegisterAccount, etRegisterPassword, etConfirmPassword, etMobile, etSmsCode;
     private Button btnAccountLogin, btnAccountRegister, btnGetSms, btnSmsLogin;
-    private CheckBox cbMobileAgreement, cbRegisterAgreement, cbLoginAgreement;  // TODO: 加载协议
+    private CheckBox cbMobileAgreement, cbRegisterAgreement, cbLoginAgreement;
     private TextView tvAccountRegister, tvAccountLogin;
     private final FodRepository repo;
     private FodCallback<LoginResponse> loginCallback;

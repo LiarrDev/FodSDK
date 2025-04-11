@@ -6,8 +6,11 @@ import android.util.Log;
 import android.view.View;
 
 import com.fodsdk.android.databinding.ActivityMainBinding;
+import com.fodsdk.core.FodConstants;
 import com.fodsdk.core.FodSDK;
 import com.fodsdk.core.IPlatformCallback;
+import com.fodsdk.entities.FodPayEntity;
+import com.fodsdk.entities.FodRole;
 
 public class MainActivity extends Activity {
 
@@ -25,13 +28,19 @@ public class MainActivity extends Activity {
     private void initView() {
         binding.btnInit.setOnClickListener(view -> FodSDK.get().init(this, new IPlatformCallback() {
             @Override
-            public void onInit(boolean success, Bundle bundle) {
-                Log.d(TAG, "Init: " + success);
+            public void onInit(int code, Bundle bundle) {
+                if (code == FodConstants.Code.SUCCESS) {
+                    Log.d(TAG, "Init Success");
+                }
             }
 
             @Override
             public void onLogin(int code, Bundle bundle) {
-
+                if (code == FodConstants.Code.SUCCESS) {
+                    String uid = bundle.getString("uid");
+                    String token = bundle.getString("token");
+                    Log.d(TAG, "Login Success, uid: " + uid + ", token: " + token);
+                }
             }
 
             @Override
@@ -41,11 +50,31 @@ public class MainActivity extends Activity {
 
             @Override
             public void onLogout(int code, Bundle bundle) {
-
+                if (code == FodConstants.Code.SUCCESS) {
+                    Log.d(TAG, "Logout Success");
+                }
             }
         }));
-        binding.btnLogin.setOnClickListener(view -> FodSDK.get().login());
-        binding.btnLogout.setOnClickListener(view -> FodSDK.get().logout());
+        binding.btnLogin.setOnClickListener(view -> FodSDK.get().login(this));
+        binding.btnLogout.setOnClickListener(view -> FodSDK.get().logout(this));
+        binding.btnPay.setOnClickListener(v -> {
+            FodRole role = new FodRole();
+            role.setRoleId("AA1234");
+            role.setRoleLevel(1);
+            role.setRoleName("角色名称");
+            role.setServerId("Server101");
+            role.setServerName("服务器名称");
+            FodPayEntity payEntity = new FodPayEntity();
+            payEntity.setOrderId(String.valueOf(System.currentTimeMillis()));
+            payEntity.setGoodsId("101");
+            payEntity.setGoodsCount(1);
+            payEntity.setGoodsName("商品名称");
+            payEntity.setGoodsDesc("商品描述");
+            payEntity.setPrice(100);
+            payEntity.setExt("");
+            payEntity.setRole(role);
+            FodSDK.get().pay(this, payEntity);
+        });
     }
 
     @Override

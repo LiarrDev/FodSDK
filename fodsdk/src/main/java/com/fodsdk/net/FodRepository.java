@@ -3,13 +3,17 @@ package com.fodsdk.net;
 import android.util.Pair;
 
 import com.fodsdk.entities.FodGameConfig;
+import com.fodsdk.entities.FodPayEntity;
+import com.fodsdk.entities.FodUser;
 import com.fodsdk.net.api.ApiGetMessage;
+import com.fodsdk.net.api.ApiSetPayInfo;
 import com.fodsdk.net.api.ApiInit;
 import com.fodsdk.net.api.ApiLogin;
 import com.fodsdk.net.api.ApiRegisterByAccount;
 import com.fodsdk.net.api.ApiRegisterByPhone;
 import com.fodsdk.net.response.LoginResponse;
 import com.fodsdk.net.response.InitResponse;
+import com.fodsdk.net.response.PayInfoResponse;
 import com.fodsdk.ui.FodLoadingDialog;
 import com.fodsdk.ui.FodTipsDialog;
 import com.fodsdk.utils.ActivityUtil;
@@ -237,6 +241,65 @@ public class FodRepository {
             });
         } catch (JSONException e) {
             ToastUtil.show("参数错误");
+            e.printStackTrace();
+        }
+    }
+
+    public void pay(FodUser user, FodPayEntity entity) {
+        try {
+            String json = gson.toJson(config);
+            Map<String, String> map = gson.fromJson(json, Map.class);
+            map.put("uid", user.getUid());
+            map.put("token", user.getToken());
+            map.put("gameOrder", entity.getOrderId());
+            map.put("goodsId", entity.getGoodsId());
+            map.put("goodsNum", String.valueOf(entity.getGoodsCount()));
+            map.put("goodsName", entity.getGoodsName());
+            map.put("roleLevel", String.valueOf(entity.getRole().getRoleLevel()));
+            map.put("roleName", entity.getRole().getRoleName());
+            map.put("roleId", entity.getRole().getRoleId());
+            map.put("ext", entity.getExt());
+            packParams(map);
+
+            String price = String.valueOf(entity.getPrice());
+            String money;
+            if (price.length() > 2) {
+                money = price.substring(0, price.length() - 2) + "." + price.substring(price.length() - 2);
+            } else {
+                money = "0." + (price.length() == 1 ? "0" : "") + price;
+            }
+            map.put("money", money);
+
+            showLoading();
+            FodNet.post(new ApiSetPayInfo(), map, new FodNet.Callback() {
+                @Override
+                public void onResponse(String response) {
+                    hideLoading();
+                    try {
+                        JSONObject rsp = new JSONObject(response);
+                        boolean status = rsp.optBoolean("status");
+                        if (status) {
+                            JSONObject data = rsp.optJSONObject("data");
+                            if (data != null) {
+                                PayInfoResponse payInfoResponse = gson.fromJson(data.toString(), PayInfoResponse.class);
+                                // TODO: 回调拉起支付弹窗
+                            }
+                        } else {
+                            ToastUtil.show(rsp.optString("data"));
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                @Override
+                public void onError(Exception e) {
+                    FodNet.Callback.super.onError(e);
+                    hideLoading();
+                }
+            });
+
+        } catch (JsonSyntaxException e) {
             e.printStackTrace();
         }
     }

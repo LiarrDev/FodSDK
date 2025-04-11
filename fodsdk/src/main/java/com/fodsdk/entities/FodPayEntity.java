@@ -7,6 +7,7 @@ public class FodPayEntity {
     private String goodsDesc;
     private int goodsCount;
     private int price;
+    private String ext;
     private FodRole role;
 
     public String getOrderId() {
@@ -53,8 +54,19 @@ public class FodPayEntity {
         return price;
     }
 
+    /**
+     * 价格，单位：分
+     */
     public void setPrice(int price) {
         this.price = price;
+    }
+
+    public String getExt() {
+        return ext;
+    }
+
+    public void setExt(String ext) {
+        this.ext = ext;
     }
 
     public FodRole getRole() {
@@ -74,6 +86,7 @@ public class FodPayEntity {
                 ", goodsDesc='" + goodsDesc + '\'' +
                 ", goodsCount=" + goodsCount +
                 ", price=" + price +
+                ", ext='" + ext + '\'' +
                 ", role=" + role +
                 '}';
     }
