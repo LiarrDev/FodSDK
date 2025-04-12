@@ -42,6 +42,8 @@ public class FodLoginDialog extends FodBaseDialog {
 
     @Override
     protected void initViews(View rootView) {
+        setCancelable(false);
+        setCanceledOnTouchOutside(false);
         initComponents(rootView);
         initCheckbox();
 

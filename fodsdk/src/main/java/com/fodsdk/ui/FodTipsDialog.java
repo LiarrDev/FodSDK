@@ -18,6 +18,8 @@ public class FodTipsDialog extends FodBaseDialog {
 
     @Override
     protected void initViews(View rootView) {
+        setCancelable(false);
+        setCanceledOnTouchOutside(false);
         tvMessage = rootView.findViewById(ResourceUtil.getViewId("tv_message"));
         tvMessage.setText(message);
     }

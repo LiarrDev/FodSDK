@@ -23,9 +23,6 @@ public abstract class FodBaseDialog extends AlertDialog {
         View rootView = View.inflate(getContext(), ResourceUtil.getLayoutId(getLayoutName()), null);
         setContentView(rootView);
         initViews(rootView);
-        // 默认不允许关闭
-        setCancelable(false);
-        setCanceledOnTouchOutside(false);
     }
 
     protected abstract void initViews(View rootView);

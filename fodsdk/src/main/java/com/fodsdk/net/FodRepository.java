@@ -1,9 +1,12 @@
 package com.fodsdk.net;
 
+import android.net.Uri;
 import android.util.Pair;
 
+import com.fodsdk.core.FodConstants;
 import com.fodsdk.entities.FodGameConfig;
 import com.fodsdk.entities.FodPayEntity;
+import com.fodsdk.entities.FodRole;
 import com.fodsdk.entities.FodUser;
 import com.fodsdk.net.api.ApiGetMessage;
 import com.fodsdk.net.api.ApiSetPayInfo;
@@ -245,7 +248,7 @@ public class FodRepository {
         }
     }
 
-    public void pay(FodUser user, FodPayEntity entity) {
+    public void pay(FodUser user, FodPayEntity entity, FodCallback<String> callback) {
         try {
             String json = gson.toJson(config);
             Map<String, String> map = gson.fromJson(json, Map.class);
@@ -282,7 +285,7 @@ public class FodRepository {
                             JSONObject data = rsp.optJSONObject("data");
                             if (data != null) {
                                 PayInfoResponse payInfoResponse = gson.fromJson(data.toString(), PayInfoResponse.class);
-                                // TODO: 回调拉起支付弹窗
+                                callback.onValue(payInfoResponse.getPayToken());
                             }
                         } else {
                             ToastUtil.show(rsp.optString("data"));
@@ -302,6 +305,22 @@ public class FodRepository {
         } catch (JsonSyntaxException e) {
             e.printStackTrace();
         }
+    }
+
+    public String getUserCenterUrl(FodRole role) {
+        String json = gson.toJson(config);
+        Map<String, String> map = gson.fromJson(json, Map.class);
+        packParams(map);
+        if (role != null) {
+            map.put("roleId", role.getRoleId());
+            map.put("roleName", role.getRoleName());
+            map.put("roleLevel", String.valueOf(role.getRoleLevel()));
+        }
+        Uri.Builder builder = Uri.parse(FodConstants.FOD_USER_CENTER).buildUpon();
+        for (Map.Entry<String, String> entry : map.entrySet()) {
+            builder.appendQueryParameter(entry.getKey(), entry.getValue());
+        }
+        return builder.build().toString();
     }
 
     private void showLoading() {

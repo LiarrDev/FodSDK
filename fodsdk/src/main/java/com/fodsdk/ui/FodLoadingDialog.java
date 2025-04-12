@@ -10,6 +10,8 @@ public class FodLoadingDialog extends FodBaseDialog {
 
     @Override
     protected void initViews(View rootView) {
+        setCancelable(false);
+        setCanceledOnTouchOutside(false);
     }
 
     @Override

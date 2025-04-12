@@ -4,9 +4,11 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Pair;
+import android.view.View;
 
 import com.fodsdk.entities.FodGameConfig;
 import com.fodsdk.entities.FodPayEntity;
+import com.fodsdk.entities.FodRole;
 import com.fodsdk.entities.FodUser;
 import com.fodsdk.net.FodRepository;
 import com.fodsdk.net.response.LoginRealInfo;
@@ -14,6 +16,7 @@ import com.fodsdk.net.response.LoginResponse;
 import com.fodsdk.settings.GlobalSettings;
 import com.fodsdk.settings.UserSettings;
 import com.fodsdk.ui.FodLoginDialog;
+import com.fodsdk.ui.FodPayDialog;
 import com.fodsdk.ui.FodWebDialog;
 import com.fodsdk.ui.view.FodFloatingBall;
 import com.fodsdk.utils.DeviceUtil;
@@ -30,6 +33,7 @@ public abstract class FodSDKCore {
     protected IPlatformCallback platformCallback;
     public FodGameConfig config;
     private FodUser user;
+    private FodRole role;
     private FodFloatingBall ball = new FodFloatingBall();
     private boolean showFloatingBall = false;
 
@@ -92,6 +96,12 @@ public abstract class FodSDKCore {
 
                 if (showFloatingBall) {
                     ball.show(activity);
+                    ball.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            showUserCenter(activity);
+                        }
+                    });
                 }
                 if (dialog.isShowing()) {
                     dialog.dismiss();
@@ -118,6 +128,12 @@ public abstract class FodSDKCore {
         }
     }
 
+    private void showUserCenter(Activity activity) {
+        String url = repo.getUserCenterUrl(role);
+        FodWebDialog dialog = new FodWebDialog(activity, url);
+        dialog.show();
+    }
+
     private void showRealNameDialog(Activity activity, LoginResponse response) {
         if (true) {
             return; // TODO: test, remove this later
@@ -140,12 +156,19 @@ public abstract class FodSDKCore {
     public void logout(Activity activity) {
         ball.hide(activity);
         user = null;
+        role = null;
         GlobalSettings.setLastLoginToken("");
         platformCallback.onLogout(FodConstants.Code.SUCCESS, new Bundle());
     }
 
     public void pay(Activity activity, FodPayEntity entity) {
-        repo.pay(user, entity);
+        repo.pay(user, entity, new FodCallback<String>() {
+            @Override
+            public void onValue(String payToken) {
+                FodPayDialog dialog = new FodPayDialog(activity, payToken);
+                dialog.show();
+            }
+        });
     }
 
     public FodUser getUser() {

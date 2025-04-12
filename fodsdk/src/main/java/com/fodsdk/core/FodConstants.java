@@ -5,6 +5,8 @@ public class FodConstants {
 
     public static String FOD_API_HOST_USER = "http://user.gzfenghou.cn/";
     public static String FOD_API_HOST_PAY = "http://pay.gzfenghou.cn/";
+    public static String FOD_PAYMENT = "http://static-manage.gzfenghou.cn/payMent/";
+    public static String FOD_USER_CENTER = "http://static-manage.gzfenghou.cn/userCenter/index.html";
 
     public static class Code {
         public static final int SUCCESS = 1;

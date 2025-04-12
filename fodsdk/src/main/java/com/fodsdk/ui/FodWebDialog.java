@@ -7,10 +7,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.webkit.WebChromeClient;
-import android.webkit.WebSettings;
 import android.webkit.WebView;
-import android.webkit.WebViewClient;
 
 import com.fodsdk.utils.DeviceUtil;
 import com.fodsdk.utils.LogUtil;
@@ -33,11 +30,6 @@ public class FodWebDialog extends AlertDialog {
         resize();
 
         WebView webView = rootView.findViewById(ResourceUtil.getViewId("web_view"));
-        webView.getSettings().setJavaScriptEnabled(true);
-        webView.getSettings().setDomStorageEnabled(true);
-        webView.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
-        webView.setWebViewClient(new WebViewClient());
-        webView.setWebChromeClient(new WebChromeClient());
         LogUtil.v("FodWebDialog url: " + url);
         webView.loadUrl(url);
     }
