@@ -23,7 +23,7 @@ public class FodPayDialog extends FodBaseDialog {
     @Override
     protected void initViews(View rootView) {
         webView = rootView.findViewById(ResourceUtil.getViewId("web_view"));
-        Uri.Builder builder = Uri.parse(FodConstants.FOD_PAYMENT).buildUpon();
+        Uri.Builder builder = Uri.parse(FodConstants.Inner.URL_PAYMENT).buildUpon();
         builder.appendQueryParameter("pay_token", payToken);
         String url = builder.toString();
         LogUtil.v("FodPayDialog url: " + url);

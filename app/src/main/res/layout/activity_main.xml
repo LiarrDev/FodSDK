@@ -37,16 +37,16 @@
             android:text="支付" />
 
         <Button
-            android:id="@+id/btn_exit"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="退出游戏" />
-
-        <Button
-            android:id="@+id/btn_server"
+            android:id="@+id/btn_select_server"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="选服" />
+
+        <Button
+            android:id="@+id/btn_enter_server"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="进服" />
 
         <Button
             android:id="@+id/btn_role_create"
@@ -61,21 +61,9 @@
             android:text="提升等级" />
 
         <Button
-            android:id="@+id/btn_enter_game"
+            android:id="@+id/btn_exit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="进入游戏" />
-
-        <Button
-            android:id="@+id/btn_user_center"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="个人中心" />
-
-        <Button
-            android:id="@+id/btn_float_ball"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="悬浮球" />
+            android:text="退出游戏" />
     </LinearLayout>
 </ScrollView>

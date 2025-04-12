@@ -25,6 +25,9 @@ import com.fodsdk.utils.ResourceUtil;
 import com.fodsdk.utils.ToastUtil;
 import com.google.gson.Gson;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public abstract class FodSDKCore {
 
     protected Activity activity;
@@ -67,7 +70,7 @@ public abstract class FodSDKCore {
 
     private void initConfig() {
         try {
-            config = gson.fromJson(ResourceUtil.readAssets2String(FodConstants.FOD_GAME_CONFIG_FILE), FodGameConfig.class);
+            config = gson.fromJson(ResourceUtil.readAssets2String(FodConstants.Inner.GAME_CONFIG_FILE), FodGameConfig.class);
             LogUtil.v("config: " + config);
         } catch (Exception e) {
             e.printStackTrace();
@@ -169,6 +172,30 @@ public abstract class FodSDKCore {
                 dialog.show();
             }
         });
+    }
+
+    public void logEvent(String event, FodRole role) {
+        Map<String, String> map = new HashMap<>();
+        if (user != null) {
+            map.put("uid", user.getUid());
+        }
+        if (role != null) {
+            this.role = role;
+            switch (event) {
+                case FodConstants.Event.SCENE_ENTRY:
+                case FodConstants.Event.SCENE_CREATE_ROLE:
+                case FodConstants.Event.SCENE_LEVEL:
+                case FodConstants.Event.SCENE_ONLINE:
+                    map.put("serverId", role.getServerId());
+                    map.put("roleId", role.getRoleId());
+                    map.put("roleName", role.getRoleName());
+                    map.put("roleLevel", String.valueOf(role.getRoleLevel()));
+                    break;
+                default:
+                    break;
+            }
+        }
+        repo.logEvent(event, map);
     }
 
     public FodUser getUser() {

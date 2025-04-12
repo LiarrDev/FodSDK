@@ -10,6 +10,6 @@ public class FodBaseUserApi extends FodBaseApi {
 
     @Override
     public String getHost() {
-        return FodConstants.FOD_API_HOST_USER;
+        return FodConstants.Inner.API_HOST_USER;
     }
 }

@@ -4,6 +4,7 @@ import android.util.Base64;
 
 import java.security.InvalidKeyException;
 import java.security.KeyFactory;
+import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.security.spec.InvalidKeySpecException;
@@ -24,7 +25,7 @@ public class CipherUtil {
             + "peOmw3xBTVVA8Jp+AJPFSQ23HtaWwV0qaExhdyiwmxgv6ssg+8KErlz8xzZqBMhJ"
             + "XwIDAQAB";
 
-    public static String encrypt(String data) {
+    public static String rsa(String data) {
         try {
             byte[] decodedKey = Base64.decode(PUBLIC_KEY, Base64.NO_WRAP);
             X509EncodedKeySpec spec = new X509EncodedKeySpec(decodedKey);
@@ -39,5 +40,24 @@ public class CipherUtil {
                 InvalidKeySpecException | BadPaddingException | InvalidKeyException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static String md5(String data) {
+        try {
+            MessageDigest messageDigest = MessageDigest.getInstance("MD5");
+            byte[] hashedBytes = messageDigest.digest(data.getBytes());
+            StringBuilder hexString = new StringBuilder();
+            for (byte b : hashedBytes) {
+                String hex = Integer.toHexString(0xFF & b);
+                if (hex.length() == 1) {
+                    hexString.append('0');
+                }
+                hexString.append(hex);
+            }
+            return hexString.toString();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

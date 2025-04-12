@@ -8,6 +8,7 @@ import com.fodsdk.entities.FodGameConfig;
 import com.fodsdk.entities.FodPayEntity;
 import com.fodsdk.entities.FodRole;
 import com.fodsdk.entities.FodUser;
+import com.fodsdk.net.api.ApiEvent;
 import com.fodsdk.net.api.ApiGetMessage;
 import com.fodsdk.net.api.ApiSetPayInfo;
 import com.fodsdk.net.api.ApiInit;
@@ -87,14 +88,14 @@ public class FodRepository {
 
     public void accountRegister(String account, String registerPassword, String confirmPassword, FodCallback<LoginResponse> callback) {
         try {
-            String rsaRegisterPassword = CipherUtil.encrypt(registerPassword);
-            String rsaConfirmPassword = CipherUtil.encrypt(confirmPassword);
+            String rsaRegisterPassword = CipherUtil.rsa(registerPassword);
+            String rsaConfirmPassword = CipherUtil.rsa(confirmPassword);
             String json = gson.toJson(config);
             Map<String, String> map = gson.fromJson(json, Map.class);
             map.put("account", account);
             map.put("password", rsaRegisterPassword);
             map.put("confirm_password", rsaConfirmPassword);
-            packParams(map);
+            map.putAll(getDeviceParams());
             showLoading();
             FodNet.post(new ApiRegisterByAccount(), map, new FodNet.Callback() {
                 @Override
@@ -120,8 +121,8 @@ public class FodRepository {
         Map<String, String> map = gson.fromJson(json, Map.class);
         map.put("login_type", "1");
         map.put("account", account);
-        map.put("password", CipherUtil.encrypt(password));
-        packParams(map);
+        map.put("password", CipherUtil.rsa(password));
+        map.putAll(getDeviceParams());
         showLoading();
         FodNet.post(new ApiLogin(), map, new FodNet.Callback() {
             @Override
@@ -143,7 +144,7 @@ public class FodRepository {
         Map<String, String> map = gson.fromJson(json, Map.class);
         map.put("login_type", "3");
         map.put("token", token);
-        packParams(map);
+        map.putAll(getDeviceParams());
         showLoading();
         FodNet.post(new ApiLogin(), map, new FodNet.Callback() {
             @Override
@@ -199,7 +200,7 @@ public class FodRepository {
             Map<String, String> map = gson.fromJson(json, Map.class);
             map.put("phone", mobile);
             map.put("code", sms);
-            packParams(map);
+            map.putAll(getDeviceParams());
             FodNet.post(new ApiRegisterByPhone(), map, new FodNet.Callback() {
                 @Override
                 public void onResponse(String response) {
@@ -262,7 +263,7 @@ public class FodRepository {
             map.put("roleName", entity.getRole().getRoleName());
             map.put("roleId", entity.getRole().getRoleId());
             map.put("ext", entity.getExt());
-            packParams(map);
+            map.putAll(getDeviceParams());
 
             String price = String.valueOf(entity.getPrice());
             String money;
@@ -307,16 +308,41 @@ public class FodRepository {
         }
     }
 
+    public void logEvent(String event, Map<String, String> extendMap) {
+        String json = gson.toJson(config);
+        Map<String, String> baseMap = gson.fromJson(json, Map.class);
+        baseMap.putAll(getDeviceParams());
+        String baseData = gson.toJson(baseMap);
+        String extendData = gson.toJson(extendMap);
+        String time = String.valueOf(System.currentTimeMillis() / 1000);
+        String sign = CipherUtil.md5(baseData + extendData + time + "sjhdhsadfeairwejn23");
+
+        Map<String, String> map = new HashMap<>();
+        map.put("type", event);
+        map.put("retime", time);
+        map.put("baseData", baseData);
+        map.put("extendData", extendData);
+        map.put("sign", sign);
+
+
+        FodNet.post(new ApiEvent(), map, new FodNet.Callback() {
+            @Override
+            public void onResponse(String response) {
+
+            }
+        });
+    }
+
     public String getUserCenterUrl(FodRole role) {
         String json = gson.toJson(config);
         Map<String, String> map = gson.fromJson(json, Map.class);
-        packParams(map);
+        map.putAll(getDeviceParams());
         if (role != null) {
             map.put("roleId", role.getRoleId());
             map.put("roleName", role.getRoleName());
             map.put("roleLevel", String.valueOf(role.getRoleLevel()));
         }
-        Uri.Builder builder = Uri.parse(FodConstants.FOD_USER_CENTER).buildUpon();
+        Uri.Builder builder = Uri.parse(FodConstants.Inner.URL_USER_CENTER).buildUpon();
         for (Map.Entry<String, String> entry : map.entrySet()) {
             builder.appendQueryParameter(entry.getKey(), entry.getValue());
         }
@@ -339,7 +365,8 @@ public class FodRepository {
         dialog.show();
     }
 
-    private void packParams(Map<String, String> map) {
+    private Map<String, String> getDeviceParams() {
+        Map<String, String> map = new HashMap<>();
         map.put("imei", DeviceUtil.getImei());
         map.put("oaid", DeviceUtil.getOaId());
         map.put("androidid", DeviceUtil.getAndroidId());
@@ -351,6 +378,10 @@ public class FodRepository {
         map.put("appver", AppUtil.getAppVersionName());
         map.put("devtype", "android");
         map.put("os", "android");
+        map.put("idfv", "");
+        map.put("idfa", "");
+        map.put("caid", "");
+        return map;
     }
 
     public FodGameConfig getGameConfig() {

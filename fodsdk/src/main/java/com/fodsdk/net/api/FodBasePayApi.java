@@ -10,6 +10,6 @@ public class FodBasePayApi extends FodBaseApi {
 
     @Override
     public String getHost() {
-        return FodConstants.FOD_API_HOST_PAY;
+        return FodConstants.Inner.API_HOST_PAY;
     }
 }

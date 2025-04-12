@@ -58,12 +58,6 @@ public class MainActivity extends Activity {
         binding.btnLogin.setOnClickListener(view -> FodSDK.get().login(this));
         binding.btnLogout.setOnClickListener(view -> FodSDK.get().logout(this));
         binding.btnPay.setOnClickListener(v -> {
-            FodRole role = new FodRole();
-            role.setRoleId("AA1234");
-            role.setRoleLevel(1);
-            role.setRoleName("角色名称");
-            role.setServerId("Server101");
-            role.setServerName("服务器名称");
             FodPayEntity payEntity = new FodPayEntity();
             payEntity.setOrderId(String.valueOf(System.currentTimeMillis()));
             payEntity.setGoodsId("101");
@@ -72,9 +66,29 @@ public class MainActivity extends Activity {
             payEntity.setGoodsDesc("商品描述");
             payEntity.setPrice(100);
             payEntity.setExt("");
-            payEntity.setRole(role);
+            payEntity.setRole(getRole());
             FodSDK.get().pay(this, payEntity);
         });
+        binding.btnExit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // TODO
+            }
+        });
+        binding.btnSelectServer.setOnClickListener(view -> FodSDK.get().logEvent(FodConstants.Event.SCENE_BEFORE_ENTRY, null));
+        binding.btnEnterServer.setOnClickListener(view -> FodSDK.get().logEvent(FodConstants.Event.SCENE_ENTRY, getRole()));
+        binding.btnRoleCreate.setOnClickListener(view -> FodSDK.get().logEvent(FodConstants.Event.SCENE_CREATE_ROLE, getRole()));
+        binding.btnRoleLevelUp.setOnClickListener(view -> FodSDK.get().logEvent(FodConstants.Event.SCENE_LEVEL, getRole()));
+    }
+
+    private FodRole getRole() {
+        FodRole role = new FodRole();
+        role.setRoleId("AA1234");
+        role.setRoleLevel(1);
+        role.setRoleName("角色名称");
+        role.setServerId("Server101");
+        role.setServerName("服务器名称");
+        return role;
     }
 
     @Override
