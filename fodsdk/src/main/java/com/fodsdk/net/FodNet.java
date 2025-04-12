@@ -11,6 +11,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.fodsdk.net.api.FodBaseApi;
 import com.fodsdk.utils.LogUtil;
+import com.fodsdk.utils.ToastUtil;
 
 import java.util.Map;
 
@@ -95,6 +96,7 @@ public class FodNet {
 
         default void onError(Exception e) {
             LogUtil.e(e.getMessage());
+            ToastUtil.show("网络错误");
         }
     }
 }

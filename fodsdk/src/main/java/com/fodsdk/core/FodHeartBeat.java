@@ -16,7 +16,6 @@ import java.util.HashMap;
 
 public abstract class FodHeartBeat {
 
-    private final FodUser user;
     private static final long HEARTBEAT_INTERVAL_5 = 5 * 60 * 1000;
     private static final long HEARTBEAT_INTERVAL_10 = 10 * 60 * 1000;
     private final Handler handler = new Handler(Looper.getMainLooper());
@@ -35,10 +34,6 @@ public abstract class FodHeartBeat {
         }
     };
 
-    public FodHeartBeat(FodUser user) {
-        this.user = user;
-    }
-
     public void start() {
         handler.post(runnable5Min);
         handler.post(runnable10Min);
@@ -54,6 +49,10 @@ public abstract class FodHeartBeat {
     }
 
     private void reportHeartbeat() {
+        FodUser user = FodSDK.get().getUser();
+        if (user == null) {
+            return;
+        }
         HashMap<String, String> map = new HashMap<>();
         map.put("uid", user.getUid());
         map.put("token", user.getToken());

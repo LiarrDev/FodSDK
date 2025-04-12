@@ -14,7 +14,6 @@ import com.fodsdk.net.api.ApiSetPayInfo;
 import com.fodsdk.net.api.ApiInit;
 import com.fodsdk.net.api.ApiLogin;
 import com.fodsdk.net.api.ApiRegisterByAccount;
-import com.fodsdk.net.api.ApiRegisterByPhone;
 import com.fodsdk.net.response.LoginResponse;
 import com.fodsdk.net.response.InitResponse;
 import com.fodsdk.net.response.PayInfoResponse;
@@ -176,6 +175,29 @@ public class FodRepository {
         });
     }
 
+    public void mobileLogin(String mobile, String sms) {
+        String json = gson.toJson(config);
+        Map<String, String> map = gson.fromJson(json, Map.class);
+        map.put("login_type", "2");
+        map.put("phone", mobile);
+        map.put("code", sms);
+        map.putAll(getDeviceParams());
+        showLoading();
+        FodNet.post(new ApiLogin(), map, new FodNet.Callback() {
+            @Override
+            public void onResponse(String response) {
+                hideLoading();
+                // TODO: 接口未实现
+            }
+
+            @Override
+            public void onError(Exception e) {
+                FodNet.Callback.super.onError(e);
+                hideLoading();
+            }
+        });
+    }
+
     private void handleLogin(String response, FodCallback<LoginResponse> callback) {
         try {
             JSONObject rsp = new JSONObject(response);
@@ -194,29 +216,6 @@ public class FodRepository {
         }
     }
 
-    public void mobileRegister(String mobile, String sms) {
-        try {
-            String json = gson.toJson(config);
-            Map<String, String> map = gson.fromJson(json, Map.class);
-            map.put("phone", mobile);
-            map.put("code", sms);
-            map.putAll(getDeviceParams());
-            FodNet.post(new ApiRegisterByPhone(), map, new FodNet.Callback() {
-                @Override
-                public void onResponse(String response) {
-                    /*boolean status = response.optBoolean("status");
-                    if (status) {
-                        // TODO
-                    } else {
-                        ToastUtil.show(response.optString("data"));
-                    }*/
-                }
-            });
-        } catch (JsonSyntaxException e) {
-            e.printStackTrace();
-        }
-    }
-
     public void getSms(String mobile) {
         try {
             String json = gson.toJson(config);
@@ -229,12 +228,7 @@ public class FodRepository {
                 @Override
                 public void onResponse(String response) {
                     hideLoading();
-                   /* boolean status = response.optBoolean("status");
-                    if (status) {
-                        // TODO
-                    } else {
-                        ToastUtil.show(response.optString("data"));
-                    }*/
+                    // TODO: 接口未实现
                 }
 
                 @Override

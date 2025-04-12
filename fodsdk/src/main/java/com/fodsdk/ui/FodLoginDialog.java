@@ -174,7 +174,7 @@ public class FodLoginDialog extends FodBaseDialog {
             ToastUtil.show("请输入验证码");
             return;
         }
-        repo.mobileRegister(mobile, smsCode);
+        repo.mobileLogin(mobile, smsCode);
     }
 
     private void showAccountLoginLayout() {

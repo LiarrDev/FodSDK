@@ -114,7 +114,7 @@ public abstract class FodSDKCore {
                 showRealNameDialog(activity, response);
 
                 logEvent(FodConstants.Event.SCENE_LOGIN, null);
-                heartBeat = new FodHeartBeat(user) {
+                heartBeat = new FodHeartBeat() {
                     @Override
                     FodRole getRole() {
                         return role;
