@@ -23,13 +23,14 @@ public class FodNet {
     }
 
     public static void post(FodBaseApi api, Map<String, String> map, Callback callback) {
+        String requestId = generateRequestId();
         StringRequest request = new StringRequest(
                 Request.Method.POST,
                 api.getUrl(),
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        LogUtil.v("POST response: " + response);
+                        LogUtil.v("POST[" + requestId + "] response: " + response);
                         LogUtil.v("================================");
                         callback.onResponse(response);
                     }
@@ -43,8 +44,8 @@ public class FodNet {
             @Override
             protected Map<String, String> getParams() {
                 LogUtil.v("================================");
-                LogUtil.v("POST request: " + api.getUrl());
-                LogUtil.v("POST params: " + map.toString());
+                LogUtil.v("POST[" + requestId + "] request: " + api.getUrl());
+                LogUtil.v("POST[" + requestId + "] params: " + map.toString());
                 LogUtil.v("================================");
                 return map;
             }
@@ -58,8 +59,9 @@ public class FodNet {
             builder.appendQueryParameter(entry.getKey(), entry.getValue());
         }
         String url = builder.toString();
+        String requestId = generateRequestId();
         LogUtil.v("================================");
-        LogUtil.e("GET request: " + url);
+        LogUtil.e("GET[" + requestId + "] request: " + url);
         LogUtil.v("================================");
         StringRequest request = new StringRequest(
                 Request.Method.GET,
@@ -67,7 +69,7 @@ public class FodNet {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        LogUtil.v("GET response: " + response);
+                        LogUtil.v("GET[" + requestId + "] response: " + response);
                         LogUtil.v("================================");
                         callback.onResponse(response);
                     }
@@ -80,6 +82,11 @@ public class FodNet {
                 }
         );
         queue.add(request);
+    }
+
+    private static String generateRequestId() {
+        String current = String.valueOf(System.currentTimeMillis());
+        return current.substring(current.length() - 5);
     }
 
     public interface Callback {

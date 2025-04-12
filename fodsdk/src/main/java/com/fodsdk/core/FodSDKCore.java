@@ -39,6 +39,7 @@ public abstract class FodSDKCore {
     private FodRole role;
     private FodFloatingBall ball = new FodFloatingBall();
     private boolean showFloatingBall = false;
+    private FodHeartBeat heartBeat;
 
     public synchronized void init(Activity activity, IPlatformCallback callback) {
         LogUtil.v("init");
@@ -60,6 +61,7 @@ public abstract class FodSDKCore {
                 showFloatingBall = pair.second;
             }
         });
+        logEvent(FodConstants.Event.SCENE_OPEN, null);
     }
 
 
@@ -110,6 +112,15 @@ public abstract class FodSDKCore {
                     dialog.dismiss();
                 }
                 showRealNameDialog(activity, response);
+
+                logEvent(FodConstants.Event.SCENE_LOGIN, null);
+                heartBeat = new FodHeartBeat(user) {
+                    @Override
+                    FodRole getRole() {
+                        return role;
+                    }
+                };
+                heartBeat.start();
             }
         };
         String token = GlobalSettings.getLastLoginToken();
@@ -160,6 +171,7 @@ public abstract class FodSDKCore {
         ball.hide(activity);
         user = null;
         role = null;
+        heartBeat.stop();
         GlobalSettings.setLastLoginToken("");
         platformCallback.onLogout(FodConstants.Code.SUCCESS, new Bundle());
     }
@@ -179,21 +191,25 @@ public abstract class FodSDKCore {
         if (user != null) {
             map.put("uid", user.getUid());
         }
-        if (role != null) {
-            this.role = role;
-            switch (event) {
-                case FodConstants.Event.SCENE_ENTRY:
-                case FodConstants.Event.SCENE_CREATE_ROLE:
-                case FodConstants.Event.SCENE_LEVEL:
-                case FodConstants.Event.SCENE_ONLINE:
+        switch (event) {
+            case FodConstants.Event.SCENE_ENTRY:
+            case FodConstants.Event.SCENE_CREATE_ROLE:
+            case FodConstants.Event.SCENE_LEVEL:
+                if (role != null) {
+                    this.role = role;
                     map.put("serverId", role.getServerId());
                     map.put("roleId", role.getRoleId());
                     map.put("roleName", role.getRoleName());
                     map.put("roleLevel", String.valueOf(role.getRoleLevel()));
-                    break;
-                default:
-                    break;
-            }
+                }
+                break;
+            case FodConstants.Event.SCENE_ONLINE:
+                map.put("serverId", role == null ? "" : role.getServerId());
+                map.put("roleId", role == null ? "" : role.getRoleId());
+                map.put("roleName", role == null ? "" : role.getRoleName());
+                map.put("roleLevel", role == null ? "" : String.valueOf(role.getRoleLevel()));
+            default:
+                break;
         }
         repo.logEvent(event, map);
     }
