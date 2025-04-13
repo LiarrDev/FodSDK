@@ -282,7 +282,10 @@ public abstract class FodSDKCore implements IFodSDK {
                 break;
         }
         repo.logEvent(event, map);
-        FodReport.get().onCustomEvent(activity, map);
+
+        Map<String, String> reportMap = new HashMap<>(map);
+        reportMap.put("event", event);
+        FodReport.get().onCustomEvent(activity, reportMap);
     }
 
     public FodUser getUser() {
