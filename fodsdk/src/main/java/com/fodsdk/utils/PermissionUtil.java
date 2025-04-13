@@ -24,7 +24,6 @@ public class PermissionUtil {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 fragmentManager.beginTransaction().add(fragment, TAG).commitNow();
             } else {
-                // TODO: Need test here, but I'm too lazy...
                 fragmentManager.beginTransaction().add(fragment, TAG).commit();
 //                fragmentManager.executePendingTransactions();
             }

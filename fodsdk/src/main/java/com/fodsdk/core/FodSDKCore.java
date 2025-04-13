@@ -1,6 +1,8 @@
 package com.fodsdk.core;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Pair;
@@ -29,7 +31,7 @@ import com.google.gson.Gson;
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class FodSDKCore {
+public abstract class FodSDKCore implements IFodSDK {
 
     protected Activity activity;
     private final FodRepository repo = new FodRepository();
@@ -46,13 +48,6 @@ public abstract class FodSDKCore {
         LogUtil.v("init");
         this.activity = activity;
         this.platformCallback = callback;
-
-        /*boolean firstLaunch = GlobalSettings.isFirstLaunch();
-        if (firstLaunch) {
-            FodAgreementDialog dialog = new FodAgreementDialog(activity);
-            dialog.show();
-        } else {
-        }*/
         initConfig();
         DeviceUtil.initPrivacy(activity);
         repo.init(config, new FodCallback<Pair<Boolean, Boolean>>() {
@@ -65,21 +60,7 @@ public abstract class FodSDKCore {
         logEvent(FodConstants.Event.SCENE_OPEN, null);
     }
 
-
-    private void requestPermissions() {
-        // TODO
-        GlobalSettings.setFirstLaunch(false);
-    }
-
-    private void initConfig() {
-        try {
-            config = gson.fromJson(ResourceUtil.readAssets2String(FodConstants.Inner.GAME_CONFIG_FILE), FodGameConfig.class);
-            LogUtil.v("config: " + config);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
+    @Override
     public void login(Activity activity) {
         FodLoginDialog dialog = new FodLoginDialog(activity, repo);
         FodCallback<LoginResponse> callback = new FodCallback<LoginResponse>() {
@@ -143,6 +124,101 @@ public abstract class FodSDKCore {
         }
     }
 
+    @Override
+    public void logout(Activity activity) {
+        release(activity);
+        GlobalSettings.setLastLoginToken("");
+        platformCallback.onLogout(FodConstants.Code.SUCCESS, new Bundle());
+    }
+
+    @Override
+    public void pay(Activity activity, FodPayEntity entity) {
+        repo.pay(user, entity, new FodCallback<String>() {
+            @Override
+            public void onValue(String payToken) {
+                FodPayDialog dialog = new FodPayDialog(activity, payToken);
+                dialog.show();
+            }
+        });
+    }
+
+    @Override
+    public void exit(Activity activity) {
+        FodExitDialog dialog = new FodExitDialog(activity, new FodCallback<Boolean>() {
+            @Override
+            public void onValue(Boolean exit) {
+                if (exit) {
+                    release(activity);
+                    platformCallback.onExit(FodConstants.Code.SUCCESS, new Bundle());
+                } else {
+                    platformCallback.onExit(FodConstants.Code.FAILURE, new Bundle());
+                }
+            }
+        });
+        dialog.show();
+    }
+
+    @Override
+    public void release(Activity activity) {
+        ball.hide(activity);
+        user = null;
+        role = null;
+        heartBeat.stop();
+    }
+
+    @Override
+    public void onInitSuccess(IPlatformCallback callback) {
+    }
+
+    @Override
+    public void onStart() {
+    }
+
+    @Override
+    public void onResume() {
+    }
+
+    @Override
+    public void onPause() {
+    }
+
+    @Override
+    public void onStop() {
+    }
+
+    @Override
+    public void onDestroy() {
+    }
+
+    @Override
+    public void onRestart() {
+    }
+
+    @Override
+    public void onNewIntent(Intent intent) {
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+    }
+
+    private void initConfig() {
+        try {
+            config = gson.fromJson(ResourceUtil.readAssets2String(FodConstants.Inner.GAME_CONFIG_FILE), FodGameConfig.class);
+            LogUtil.v("config: " + config);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     private void showUserCenter(Activity activity) {
         String url = repo.getUserCenterUrl(role);
         FodWebDialog dialog = new FodWebDialog(activity, url);
@@ -166,44 +242,6 @@ public abstract class FodSDKCore {
             }
             dialog.show();
         }
-    }
-
-    public void logout(Activity activity) {
-        release(activity);
-        GlobalSettings.setLastLoginToken("");
-        platformCallback.onLogout(FodConstants.Code.SUCCESS, new Bundle());
-    }
-
-    public void pay(Activity activity, FodPayEntity entity) {
-        repo.pay(user, entity, new FodCallback<String>() {
-            @Override
-            public void onValue(String payToken) {
-                FodPayDialog dialog = new FodPayDialog(activity, payToken);
-                dialog.show();
-            }
-        });
-    }
-
-    public void exit(Activity activity) {
-        FodExitDialog dialog = new FodExitDialog(activity, new FodCallback<Boolean>() {
-            @Override
-            public void onValue(Boolean exit) {
-                if (exit) {
-                    release(activity);
-                    platformCallback.onExit(FodConstants.Code.SUCCESS, new Bundle());
-                } else {
-                    platformCallback.onExit(FodConstants.Code.FAILURE, new Bundle());
-                }
-            }
-        });
-        dialog.show();
-    }
-
-    private void release(Activity activity) {
-        ball.hide(activity);
-        user = null;
-        role = null;
-        heartBeat.stop();
     }
 
     public void logEvent(String event, FodRole role) {

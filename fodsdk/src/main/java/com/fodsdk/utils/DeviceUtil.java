@@ -16,11 +16,12 @@ import android.view.WindowManager;
 
 import com.fodsdk.FodBaseApplication;
 
+import java.util.List;
+
 public class DeviceUtil {
 
     private static String imei = "00000000-0000-0000-0000-000000000000";
     private static String oaid = "00000000-0000-0000-0000-000000000000";
-    private static final int REQUEST_CODE_READ_PHONE_STATE = 1050;
 
     public static void initPrivacy(Activity activity) {
         initOaId(activity);
@@ -51,7 +52,14 @@ public class DeviceUtil {
             return;
         }
         if (activity.checkSelfPermission(Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
-            activity.requestPermissions(new String[]{Manifest.permission.READ_PHONE_STATE}, REQUEST_CODE_READ_PHONE_STATE); // TODO: 权限响应处理
+            PermissionUtil.apply(activity, new String[]{Manifest.permission.READ_PHONE_STATE}, new PermissionUtil.PermissionCallback() {
+                @Override
+                public void onResult(boolean isAllGranted, List<String> deniedList) {
+                    if (isAllGranted) {
+                        tryImei(activity);
+                    }
+                }
+            });
         } else {
             tryImei(activity);
         }

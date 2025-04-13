@@ -1,9 +1,13 @@
 package com.fodsdk.android;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+
+import androidx.annotation.NonNull;
 
 import com.fodsdk.android.databinding.ActivityMainBinding;
 import com.fodsdk.core.FodConstants;
@@ -95,6 +99,60 @@ public class MainActivity extends Activity {
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        FodSDK.get().onStart();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        FodSDK.get().onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        FodSDK.get().onPause();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        FodSDK.get().onStop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        FodSDK.get().onDestroy();
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        FodSDK.get().onRestart();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        FodSDK.get().onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        FodSDK.get().onNewIntent(intent);
+    }
+
+    @Override
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        FodSDK.get().onConfigurationChanged(newConfig);
+    }
+
+    @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
         getWindow().getDecorView().setSystemUiVisibility(
@@ -105,5 +163,6 @@ public class MainActivity extends Activity {
                         | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                         | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
         );
+        FodSDK.get().onWindowFocusChanged(hasFocus);
     }
 }
