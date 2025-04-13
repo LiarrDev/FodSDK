@@ -24,5 +24,6 @@ public class FodConstants {
         public static final String SCENE_CREATE_ROLE = "role";
         public static final String SCENE_LEVEL = "level";
         public static final String SCENE_ONLINE = "online";
+        public static final String SCENE_ERROR = "sdk_error";
     }
 }

@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Application;
 import android.content.Context;
 
+import com.fodsdk.core.FodUncaughtExceptionHandler;
 import com.fodsdk.net.FodNet;
 import com.fodsdk.report.FodReport;
 
@@ -20,6 +21,7 @@ public class FodBaseApplication extends Application {
         super.onCreate();
         context = getApplicationContext();
         FodNet.init(context);
+        FodUncaughtExceptionHandler.get().init(context);
         FodReport.get().onApplication(context);
     }
 
