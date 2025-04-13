@@ -5,7 +5,7 @@ import android.content.Context;
 
 import com.fodsdk.utils.LogUtil;
 
-import java.util.HashMap;
+import java.util.Map;
 
 class InternalReport implements IReport {
 
@@ -50,17 +50,17 @@ class InternalReport implements IReport {
     }
 
     @Override
-    public void onRegisterEvent(Context context, HashMap<String, String> map) {
+    public void onRegisterEvent(Context context, Map<String, String> map) {
         LogUtil.v("onRegisterEvent: " + map.toString());
     }
 
     @Override
-    public void onPayEvent(Context context, HashMap<String, String> map) {
+    public void onPayEvent(Context context, Map<String, String> map) {
         LogUtil.v("onPayEvent: " + map.toString());
     }
 
     @Override
-    public void onCustomEvent(Context context, HashMap<String, String> map) {
+    public void onCustomEvent(Context context, Map<String, String> map) {
         LogUtil.v("onCustomEvent: " + map.toString());
     }
 }

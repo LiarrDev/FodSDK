@@ -3,7 +3,7 @@ package com.fodsdk.report;
 import android.app.Activity;
 import android.content.Context;
 
-import java.util.HashMap;
+import java.util.Map;
 
 public interface IReport {
 
@@ -23,9 +23,9 @@ public interface IReport {
 
     void onRestart(Activity activity);
 
-    void onRegisterEvent(Context context, HashMap<String, String> map);
+    void onRegisterEvent(Context context, Map<String, String> map);
 
-    void onPayEvent(Context context, HashMap<String, String> map);
+    void onPayEvent(Context context, Map<String, String> map);
 
-    void onCustomEvent(Context context, HashMap<String, String> map);
+    void onCustomEvent(Context context, Map<String, String> map);
 }

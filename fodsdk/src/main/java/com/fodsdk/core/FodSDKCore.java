@@ -15,6 +15,7 @@ import com.fodsdk.entities.FodUser;
 import com.fodsdk.net.FodRepository;
 import com.fodsdk.net.response.LoginRealInfo;
 import com.fodsdk.net.response.LoginResponse;
+import com.fodsdk.report.FodReport;
 import com.fodsdk.settings.GlobalSettings;
 import com.fodsdk.settings.UserSettings;
 import com.fodsdk.ui.FodExitDialog;
@@ -58,6 +59,7 @@ public abstract class FodSDKCore implements IFodSDK {
             }
         });
         logEvent(FodConstants.Event.SCENE_OPEN, null);
+        FodReport.get().onCreate(activity);
     }
 
     @Override
@@ -74,6 +76,9 @@ public abstract class FodSDKCore implements IFodSDK {
                 user.setRealName(response.getRealInfo().getIsRealName() == 1);
 
                 GlobalSettings.setLastLoginToken(user.getToken());
+                if (response.getIsNewRegister() == 1) {
+                    FodReport.get().onRegisterEvent(activity, new HashMap<>());
+                }
 
                 // 回调给 CP
                 Bundle bundle = new Bundle();
@@ -172,26 +177,32 @@ public abstract class FodSDKCore implements IFodSDK {
 
     @Override
     public void onStart() {
+        FodReport.get().onStart(activity);
     }
 
     @Override
     public void onResume() {
+        FodReport.get().onResume(activity);
     }
 
     @Override
     public void onPause() {
+        FodReport.get().onPause(activity);
     }
 
     @Override
     public void onStop() {
+        FodReport.get().onStop(activity);
     }
 
     @Override
     public void onDestroy() {
+        FodReport.get().onDestroy(activity);
     }
 
     @Override
     public void onRestart() {
+        FodReport.get().onRestart(activity);
     }
 
     @Override
@@ -270,6 +281,7 @@ public abstract class FodSDKCore implements IFodSDK {
                 break;
         }
         repo.logEvent(event, map);
+        FodReport.get().onCustomEvent(activity, map);
     }
 
     public FodUser getUser() {
