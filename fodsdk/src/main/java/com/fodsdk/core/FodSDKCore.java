@@ -19,7 +19,7 @@ import com.fodsdk.report.FodReport;
 import com.fodsdk.settings.GlobalSettings;
 import com.fodsdk.settings.UserSettings;
 import com.fodsdk.ui.FodExitDialog;
-import com.fodsdk.ui.FodLoginDialog;
+import com.fodsdk.ui.FodLoginSimpleDialog;
 import com.fodsdk.ui.FodPayDialog;
 import com.fodsdk.ui.FodWebDialog;
 import com.fodsdk.ui.view.FodFloatingBall;
@@ -64,7 +64,8 @@ public abstract class FodSDKCore implements IFodSDK {
 
     @Override
     public void login(Activity activity) {
-        FodLoginDialog dialog = new FodLoginDialog(activity, repo);
+//        FodLoginDialog dialog = new FodLoginDialog(activity, repo);
+        FodLoginSimpleDialog dialog = new FodLoginSimpleDialog(activity, repo);
         FodCallback<LoginResponse> callback = new FodCallback<LoginResponse>() {
             @Override
             public void onValue(LoginResponse response) {
