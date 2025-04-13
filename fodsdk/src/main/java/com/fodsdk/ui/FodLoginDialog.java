@@ -59,6 +59,7 @@ public class FodLoginDialog extends FodBaseDialog {
                 } else if (checkedId == rbSms.getId()) {
                     showSmsLoginLayout();
                 }
+                clearFocus();
             }
         }));
         radioGroup.check(rbAccount.getId());
@@ -66,15 +67,14 @@ public class FodLoginDialog extends FodBaseDialog {
         btnAccountLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                hideSoftKeyBoard(v);
-                etLoginAccount.clearFocus();
-                etLoginPassword.clearFocus();
+                clearFocus();
                 doAccountLogin();
             }
         });
         tvAccountRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                clearFocus();
                 isRegister = true;
                 rbAccount.setText(ResourceUtil.getStringId("fod_account_register"));
                 showAccountRegisterLayout();
@@ -84,16 +84,14 @@ public class FodLoginDialog extends FodBaseDialog {
         btnAccountRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                hideSoftKeyBoard(v);
-                etRegisterAccount.clearFocus();
-                etConfirmPassword.clearFocus();
-                etRegisterPassword.clearFocus();
+                clearFocus();
                 doAccountRegister();
             }
         });
         tvAccountLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                clearFocus();
                 isRegister = false;
                 rbAccount.setText(ResourceUtil.getStringId("fod_account_login"));
                 showAccountLoginLayout();
@@ -109,9 +107,7 @@ public class FodLoginDialog extends FodBaseDialog {
         btnSmsLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                hideSoftKeyBoard(v);
-                etMobile.clearFocus();
-                etSmsCode.clearFocus();
+                clearFocus();
                 doSmsLogin();
             }
         });
@@ -193,6 +189,17 @@ public class FodLoginDialog extends FodBaseDialog {
         accountLoginLayout.setVisibility(View.GONE);
         accountRegisterLayout.setVisibility(View.VISIBLE);
         smsLoginLayout.setVisibility(View.GONE);
+    }
+
+    private void clearFocus() {
+        hideSoftKeyBoard(radioGroup);
+        etLoginAccount.clearFocus();
+        etLoginPassword.clearFocus();
+        etRegisterAccount.clearFocus();
+        etRegisterPassword.clearFocus();
+        etConfirmPassword.clearFocus();
+        etMobile.clearFocus();
+        etSmsCode.clearFocus();
     }
 
     @Override

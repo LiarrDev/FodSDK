@@ -53,6 +53,7 @@ public class FodLoginSimpleDialog extends FodBaseDialog {
                 } else if (checkedId == rbRegister.getId()) {
                     showAccountRegisterLayout();
                 }
+                clearFocus();
             }
         }));
         radioGroup.check(rbLogin.getId());
@@ -60,19 +61,14 @@ public class FodLoginSimpleDialog extends FodBaseDialog {
         btnAccountLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                hideSoftKeyBoard(v);
-                etLoginAccount.clearFocus();
-                etLoginPassword.clearFocus();
+                clearFocus();
                 doAccountLogin();
             }
         });
         btnAccountRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                hideSoftKeyBoard(v);
-                etRegisterAccount.clearFocus();
-                etConfirmPassword.clearFocus();
-                etRegisterPassword.clearFocus();
+                clearFocus();
                 doAccountRegister();
             }
         });
@@ -122,6 +118,15 @@ public class FodLoginSimpleDialog extends FodBaseDialog {
     private void showAccountRegisterLayout() {
         accountLoginLayout.setVisibility(View.GONE);
         accountRegisterLayout.setVisibility(View.VISIBLE);
+    }
+
+    private void clearFocus() {
+        hideSoftKeyBoard(radioGroup);
+        etLoginAccount.clearFocus();
+        etLoginPassword.clearFocus();
+        etRegisterAccount.clearFocus();
+        etConfirmPassword.clearFocus();
+        etRegisterPassword.clearFocus();
     }
 
     @Override
