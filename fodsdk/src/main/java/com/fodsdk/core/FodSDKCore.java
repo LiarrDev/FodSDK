@@ -15,6 +15,7 @@ import com.fodsdk.net.response.LoginRealInfo;
 import com.fodsdk.net.response.LoginResponse;
 import com.fodsdk.settings.GlobalSettings;
 import com.fodsdk.settings.UserSettings;
+import com.fodsdk.ui.FodExitDialog;
 import com.fodsdk.ui.FodLoginDialog;
 import com.fodsdk.ui.FodPayDialog;
 import com.fodsdk.ui.FodWebDialog;
@@ -168,10 +169,7 @@ public abstract class FodSDKCore {
     }
 
     public void logout(Activity activity) {
-        ball.hide(activity);
-        user = null;
-        role = null;
-        heartBeat.stop();
+        release(activity);
         GlobalSettings.setLastLoginToken("");
         platformCallback.onLogout(FodConstants.Code.SUCCESS, new Bundle());
     }
@@ -184,6 +182,28 @@ public abstract class FodSDKCore {
                 dialog.show();
             }
         });
+    }
+
+    public void exit(Activity activity) {
+        FodExitDialog dialog = new FodExitDialog(activity, new FodCallback<Boolean>() {
+            @Override
+            public void onValue(Boolean exit) {
+                if (exit) {
+                    release(activity);
+                    platformCallback.onExit(FodConstants.Code.SUCCESS, new Bundle());
+                } else {
+                    platformCallback.onExit(FodConstants.Code.FAILURE, new Bundle());
+                }
+            }
+        });
+        dialog.show();
+    }
+
+    private void release(Activity activity) {
+        ball.hide(activity);
+        user = null;
+        role = null;
+        heartBeat.stop();
     }
 
     public void logEvent(String event, FodRole role) {

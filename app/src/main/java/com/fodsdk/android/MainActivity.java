@@ -54,6 +54,14 @@ public class MainActivity extends Activity {
                     Log.d(TAG, "Logout Success");
                 }
             }
+
+            @Override
+            public void onExit(int code, Bundle bundle) {
+                if (code == FodConstants.Code.SUCCESS) {
+                    Log.d(TAG, "Exit Success");
+                    finish();
+                }
+            }
         }));
         binding.btnLogin.setOnClickListener(view -> FodSDK.get().login(this));
         binding.btnLogout.setOnClickListener(view -> FodSDK.get().logout(this));
@@ -69,12 +77,7 @@ public class MainActivity extends Activity {
             payEntity.setRole(getRole());
             FodSDK.get().pay(this, payEntity);
         });
-        binding.btnExit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // TODO
-            }
-        });
+        binding.btnExit.setOnClickListener(view -> FodSDK.get().exit(this));
         binding.btnSelectServer.setOnClickListener(view -> FodSDK.get().logEvent(FodConstants.Event.SCENE_BEFORE_ENTRY, null));
         binding.btnEnterServer.setOnClickListener(view -> FodSDK.get().logEvent(FodConstants.Event.SCENE_ENTRY, getRole()));
         binding.btnRoleCreate.setOnClickListener(view -> FodSDK.get().logEvent(FodConstants.Event.SCENE_CREATE_ROLE, getRole()));

@@ -11,4 +11,6 @@ public interface IPlatformCallback {
     void onPay(int code, Bundle bundle);
 
     void onLogout(int code, Bundle bundle);
+
+    void onExit(int code, Bundle bundle);
 }
