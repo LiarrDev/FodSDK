@@ -33,13 +33,17 @@ public class FodNet {
                     public void onResponse(String response) {
                         LogUtil.v("POST[" + requestId + "] response: " + response);
                         LogUtil.v("================================");
-                        callback.onResponse(response);
+                        if (callback != null) {
+                            callback.onResponse(response);
+                        }
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        callback.onError(error);
+                        if (callback != null) {
+                            callback.onError(error);
+                        }
                     }
                 }) {
             @Override
@@ -72,13 +76,17 @@ public class FodNet {
                     public void onResponse(String response) {
                         LogUtil.v("GET[" + requestId + "] response: " + response);
                         LogUtil.v("================================");
-                        callback.onResponse(response);
+                        if (callback != null) {
+                            callback.onResponse(response);
+                        }
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        callback.onError(error);
+                        if (callback != null) {
+                            callback.onError(error);
+                        }
                     }
                 }
         );

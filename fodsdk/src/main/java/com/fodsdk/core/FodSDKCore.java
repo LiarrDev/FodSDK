@@ -29,8 +29,12 @@ import com.fodsdk.utils.ResourceUtil;
 import com.fodsdk.utils.ToastUtil;
 import com.google.gson.Gson;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 public abstract class FodSDKCore implements IFodSDK {
 
@@ -59,6 +63,7 @@ public abstract class FodSDKCore implements IFodSDK {
             }
         });
         logEvent(FodConstants.Event.SCENE_OPEN, null);
+        uploadError();
         FodReport.get().onCreate(activity);
     }
 
@@ -286,6 +291,30 @@ public abstract class FodSDKCore implements IFodSDK {
         Map<String, String> reportMap = new HashMap<>(map);
         reportMap.put("event", event);
         FodReport.get().onCustomEvent(activity, reportMap);
+    }
+
+    private void uploadError() {
+        LogUtil.d("uploadError");
+        Set<String> set = GlobalSettings.getError();
+        LogUtil.d("error num: " + set.size());
+        for (String error : set) {
+            Map<String, String> map = new HashMap<>();
+            try {
+                JSONObject json = new JSONObject(error);
+                String uid = json.optString("uid");
+                LogUtil.e("uid: " + uid);
+                map.put("uid", uid);
+                map.put("error", error);
+                repo.logEvent(FodConstants.Event.SCENE_ERROR, map, new FodCallback<Void>() {
+                    @Override
+                    public void onValue(Void unused) {
+                        GlobalSettings.removeError(error);
+                    }
+                });
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public FodUser getUser() {

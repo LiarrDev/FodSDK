@@ -5,6 +5,8 @@ import android.content.SharedPreferences;
 
 import com.fodsdk.FodBaseApplication;
 
+import java.util.Set;
+
 public class SPUtil {
 
     private static final String SP_NAME = "fod_sdk_cache";
@@ -31,6 +33,14 @@ public class SPUtil {
 
     public static boolean get(String key, boolean defValue) {
         return getSharedPreferences().getBoolean(key, defValue);
+    }
+
+    public static void put(String key, Set<String> set) {
+        getSharedPreferences().edit().putStringSet(key, set).commit();
+    }
+
+    public static Set<String> get(String key, Set<String> set) {
+        return getSharedPreferences().getStringSet(key, set);
     }
 
     private static SharedPreferences getSharedPreferences() {

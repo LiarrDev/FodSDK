@@ -303,6 +303,10 @@ public class FodRepository {
     }
 
     public void logEvent(String event, Map<String, String> extendMap) {
+        logEvent(event, extendMap, null);
+    }
+
+    public void logEvent(String event, Map<String, String> extendMap, FodCallback<Void> callback) {
         String json = gson.toJson(config);
         Map<String, String> baseMap = gson.fromJson(json, Map.class);
         baseMap.putAll(getDeviceParams());
@@ -318,11 +322,12 @@ public class FodRepository {
         map.put("extendData", extendData);
         map.put("sign", sign);
 
-
         FodNet.post(new ApiEvent(), map, new FodNet.Callback() {
             @Override
             public void onResponse(String response) {
-
+                if (callback != null) {
+                    callback.onValue(null);
+                }
             }
         });
     }
