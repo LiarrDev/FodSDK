@@ -22,6 +22,9 @@ import com.fodsdk.net.response.LoginResponse;
 import com.fodsdk.utils.ResourceUtil;
 import com.fodsdk.utils.ToastUtil;
 
+/**
+ * TODO: remove
+ */
 public class FodLoginSimpleDialog extends FodBaseDialog {
     private RadioGroup radioGroup;
     private RadioButton rbLogin, rbRegister;

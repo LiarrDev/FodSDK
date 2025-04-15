@@ -1,6 +1,7 @@
 package com.fodsdk.ui;
 
 import android.content.Context;
+import android.os.CountDownTimer;
 import android.text.Html;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
@@ -34,6 +35,7 @@ public class FodLoginDialog extends FodBaseDialog {
     private TextView tvAccountRegister, tvAccountLogin;
     private final FodRepository repo;
     private FodCallback<LoginResponse> loginCallback;
+    private CountDownTimer timer;
 
     public FodLoginDialog(Context context, FodRepository repo) {
         super(context);
@@ -101,6 +103,7 @@ public class FodLoginDialog extends FodBaseDialog {
         btnGetSms.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                clearFocus();
                 getSmsCode();
             }
         });
@@ -152,7 +155,26 @@ public class FodLoginDialog extends FodBaseDialog {
             ToastUtil.show("请输入手机号");
             return;
         }
-        repo.getSms(mobile);
+        repo.getSms(mobile, new FodCallback<Void>() {
+            @Override
+            public void onValue(Void unused) {
+                timer = new CountDownTimer(60 * 1000, 1000) {
+                    @Override
+                    public void onTick(long millisUntilFinished) {
+                        btnGetSms.setEnabled(false);
+                        btnGetSms.setAlpha(0.5f);
+                        btnGetSms.setText(getContext().getString(ResourceUtil.getStringId("fod_sms_count_down"), millisUntilFinished / 1000));
+                    }
+
+                    @Override
+                    public void onFinish() {
+                        btnGetSms.setEnabled(true);
+                        btnGetSms.setAlpha(1);
+                        btnGetSms.setText(ResourceUtil.getStringId("fod_get_sms_code"));
+                    }
+                }.start();
+            }
+        });
     }
 
     private void doSmsLogin() {
@@ -200,6 +222,14 @@ public class FodLoginDialog extends FodBaseDialog {
         etConfirmPassword.clearFocus();
         etMobile.clearFocus();
         etSmsCode.clearFocus();
+    }
+
+    @Override
+    public void dismiss() {
+        super.dismiss();
+        if (timer != null) {
+            timer.cancel();
+        }
     }
 
     @Override

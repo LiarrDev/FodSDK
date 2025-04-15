@@ -216,31 +216,44 @@ public class FodRepository {
         }
     }
 
-    public void getSms(String mobile) {
-        try {
-            String json = gson.toJson(config);
-            JSONObject obj = new JSONObject(json);
-            obj.put("phone", mobile);
-            obj.put("type", "phone_login");
-            obj.put("androidid", DeviceUtil.getAndroidId());
-            showLoading();
-            FodNet.post(new ApiGetMessage(), new HashMap<>(), new FodNet.Callback() {
-                @Override
-                public void onResponse(String response) {
-                    hideLoading();
-                    // TODO: 接口未实现
+    public void getSms(String mobile, FodCallback<Void> callback) {
+        String json = gson.toJson(config);
+        Map<String, String> map = gson.fromJson(json, Map.class);
+        map.put("phone", mobile);
+        map.put("type", "phone_login");
+        map.put("androidid", DeviceUtil.getAndroidId());
+        String sign = CipherUtil.md5(config.getGId() + config.getPkId() + mobile + "fnsdfsea3@ws!#wa");
+        map.put("sign", sign);
+        showLoading();
+        FodNet.post(new ApiGetMessage(), map, new FodNet.Callback() {
+            @Override
+            public void onResponse(String response) {
+                hideLoading();
+                try {
+                    JSONObject rsp = new JSONObject(response);
+                    boolean status = rsp.optBoolean("status");
+                    if (status) {
+                        JSONObject data = rsp.optJSONObject("data");
+                        if (data != null) {
+                            String msg = data.optString("msg");
+                            ToastUtil.show(msg);
+                            callback.onValue(null);
+                        }
+                    } else {
+                        String data = rsp.optString("data");
+                        ToastUtil.show(data);
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
+            }
 
-                @Override
-                public void onError(Exception e) {
-                    hideLoading();
-                    FodNet.Callback.super.onError(e);
-                }
-            });
-        } catch (JSONException e) {
-            ToastUtil.show("参数错误");
-            e.printStackTrace();
-        }
+            @Override
+            public void onError(Exception e) {
+                hideLoading();
+                FodNet.Callback.super.onError(e);
+            }
+        });
     }
 
     public void pay(FodUser user, FodPayEntity entity, FodCallback<String> callback) {
