@@ -269,6 +269,7 @@ public class FodRepository {
             map.put("roleLevel", String.valueOf(entity.getRole().getRoleLevel()));
             map.put("roleName", entity.getRole().getRoleName());
             map.put("roleId", entity.getRole().getRoleId());
+            map.put("serverId", entity.getRole().getServerId());
             map.put("ext", entity.getExt());
             map.putAll(getDeviceParams());
 

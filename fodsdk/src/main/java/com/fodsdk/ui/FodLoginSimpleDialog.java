@@ -48,7 +48,7 @@ public class FodLoginSimpleDialog extends FodBaseDialog {
         initComponents(rootView);
         initCheckbox();
 
-        radioGroup.setOnCheckedChangeListener((new RadioGroup.OnCheckedChangeListener() {
+        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 if (checkedId == rbLogin.getId()) {
@@ -58,7 +58,7 @@ public class FodLoginSimpleDialog extends FodBaseDialog {
                 }
                 clearFocus();
             }
-        }));
+        });
         radioGroup.check(rbLogin.getId());
 
         btnAccountLogin.setOnClickListener(new View.OnClickListener() {
