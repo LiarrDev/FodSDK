@@ -26,4 +26,9 @@ public class FodConstants {
         public static final String SCENE_ONLINE = "online";
         public static final String SCENE_ERROR = "sdk_error";
     }
+
+    public static class SCHEME {
+        public static final String WECHAT = "weixin://";
+        public static final String ALIPAY = "alipays://";
+    }
 }
