@@ -11,6 +11,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import com.fodsdk.core.FodConstants;
+import com.fodsdk.utils.LogUtil;
 
 public class FodWebView extends WebView {
     public FodWebView(Context context) {
@@ -42,6 +43,7 @@ public class FodWebView extends WebView {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
                 Uri uri = request.getUrl();
+                LogUtil.d("FodWebView shouldOverrideUrlLoading: " + uri.toString());
                 if (scheme(uri.toString())) {
                     try {
                         Intent intent = new Intent(Intent.ACTION_VIEW, uri);
@@ -54,6 +56,12 @@ public class FodWebView extends WebView {
                 return super.shouldOverrideUrlLoading(view, request);
             }
         });
+    }
+
+    @Override
+    public void loadUrl(String url) {
+        super.loadUrl(url);
+        LogUtil.d("FodWebView loadUrl: " + url);
     }
 
     private boolean scheme(String url) {
