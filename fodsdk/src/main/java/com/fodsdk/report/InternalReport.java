@@ -50,6 +50,11 @@ class InternalReport implements IReport {
     }
 
     @Override
+    public void onInit(Activity activity) {
+        LogUtil.v("onInit");
+    }
+
+    @Override
     public void onRegisterEvent(Context context, Map<String, String> map) {
         LogUtil.v("onRegisterEvent: " + map.toString());
     }

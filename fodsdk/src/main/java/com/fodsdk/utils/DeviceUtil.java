@@ -15,6 +15,7 @@ import android.text.TextUtils;
 import android.view.WindowManager;
 
 import com.fodsdk.FodBaseApplication;
+import com.fodsdk.core.FodCallback;
 
 import java.util.List;
 
@@ -23,12 +24,21 @@ public class DeviceUtil {
     private static String imei = "00000000-0000-0000-0000-000000000000";
     private static String oaid = "00000000-0000-0000-0000-000000000000";
 
-    public static void initPrivacy(Activity activity) {
-        initOaId(activity);
-        initImei(activity);
+    public static void initPrivacy(Activity activity, FodCallback<Void> callback) {
+        initOaId(activity, new FodCallback<Void>() {
+            @Override
+            public void onValue(Void unused) {
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        initImei(activity, callback);
+                    }
+                });
+            }
+        });
     }
 
-    public static void initOaId(Context context) {
+    public static void initOaId(Context context, FodCallback<Void> callback) {
         OaIdHelper helper = new OaIdHelper(new OaIdHelper.AppIdsUpdater() {
             @Override
             public void onIdsUpdate(String id) {
@@ -38,6 +48,7 @@ public class DeviceUtil {
                     oaid = id;
                     LogUtil.i("OAID:" + id);
                 }
+                callback.onValue(null);
             }
         });
         helper.getDeviceIds(context);
@@ -47,8 +58,9 @@ public class DeviceUtil {
         return oaid;
     }
 
-    public static void initImei(Activity activity) {
+    public static void initImei(Activity activity, FodCallback<Void> callback) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            callback.onValue(null);
             return;
         }
         if (activity.checkSelfPermission(Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
@@ -57,11 +69,15 @@ public class DeviceUtil {
                 public void onResult(boolean isAllGranted, List<String> deniedList) {
                     if (isAllGranted) {
                         tryImei(activity);
+                    } else {
+                        LogUtil.d("拒绝权限申请：READ_PHONE_STATE");
                     }
+                    callback.onValue(null);
                 }
             });
         } else {
             tryImei(activity);
+            callback.onValue(null);
         }
     }
 
@@ -70,10 +86,10 @@ public class DeviceUtil {
             TelephonyManager telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
             String id = telephonyManager.getDeviceId();
             if (TextUtils.isEmpty(id)) {
-                LogUtil.e("IMEI 为kon");
+                LogUtil.e("IMEI 为空");
             } else {
                 imei = id;
-                LogUtil.v("IMEI 不为空：" + id);
+                LogUtil.i("IMEI: " + id);
             }
         } catch (Exception e) {
             e.printStackTrace();

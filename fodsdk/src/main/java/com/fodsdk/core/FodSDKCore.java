@@ -54,16 +54,21 @@ public abstract class FodSDKCore implements IFodSDK {
         this.activity = activity;
         this.platformCallback = callback;
         initConfig();
-        DeviceUtil.initPrivacy(activity);
-        repo.init(config, new FodCallback<Pair<Boolean, Boolean>>() {
+        DeviceUtil.initPrivacy(activity, new FodCallback<Void>() {
             @Override
-            public void onValue(Pair<Boolean, Boolean> pair) {
-                callback.onInit(pair.first ? FodConstants.Code.SUCCESS : FodConstants.Code.FAILURE, new Bundle());
-                showFloatingBall = pair.second;
+            public void onValue(Void unused) {
+                repo.init(config, new FodCallback<Pair<Boolean, Boolean>>() {
+                    @Override
+                    public void onValue(Pair<Boolean, Boolean> pair) {
+                        callback.onInit(pair.first ? FodConstants.Code.SUCCESS : FodConstants.Code.FAILURE, new Bundle());
+                        showFloatingBall = pair.second;
+                    }
+                });
+                logEvent(FodConstants.Event.SCENE_OPEN, null);
+                uploadError();
+                FodReport.get().onInit(activity);
             }
         });
-        logEvent(FodConstants.Event.SCENE_OPEN, null);
-        uploadError();
         FodReport.get().onCreate(activity);
     }
 
