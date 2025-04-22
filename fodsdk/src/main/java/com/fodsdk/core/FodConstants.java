@@ -4,11 +4,11 @@ public class FodConstants {
 
     public static class Inner {
         public static String GAME_CONFIG_FILE = "fod_game_config.json";
-        public static String API_HOST_USER = "http://user.gzfenghou.cn/";
-        public static String API_HOST_PAY = "http://pay.gzfenghou.cn/";
-        public static String API_HOST_EVENT = "http://log.gzfenghou.cn";
-        public static String URL_PAYMENT = "http://static-manage.gzfenghou.cn/payMent/";
-        public static String URL_USER_CENTER = "http://static-manage.gzfenghou.cn/userCenter/index.html";
+        public static String API_HOST_USER = "https://user.gzxiaowanzi.cn/";
+        public static String API_HOST_PAY = "https://pay.gzxiaowanzi.cn/";
+        public static String API_HOST_EVENT = "https://log.gzxiaowanzi.cn";
+        public static String URL_PAYMENT = "https://static-manage.gzxiaowanzi.cn/payMent/";
+        public static String URL_USER_CENTER = "https://static-manage.gzxiaowanzi.cn/userCenter/index.html";
     }
 
     public static class Code {
