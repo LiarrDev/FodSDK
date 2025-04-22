@@ -32,7 +32,9 @@ import com.google.gson.Gson;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -48,6 +50,7 @@ public abstract class FodSDKCore implements IFodSDK {
     private FodFloatingBall ball = new FodFloatingBall();
     private boolean showFloatingBall = false;
     private FodHeartBeat heartBeat;
+    private final List<Pair<String, FodPayResultPollingTask>> tasks = new ArrayList<>();
 
     public synchronized void init(Activity activity, IPlatformCallback callback) {
         LogUtil.v("init");
@@ -151,7 +154,12 @@ public abstract class FodSDKCore implements IFodSDK {
         repo.pay(user, entity, new FodCallback<String>() {
             @Override
             public void onValue(String payToken) {
-                FodPayDialog dialog = new FodPayDialog(activity, payToken);
+                FodPayDialog dialog = new FodPayDialog(activity, payToken, new FodCallback<String>() {
+                    @Override
+                    public void onValue(String order) {
+                        checkPayResult(order);
+                    }
+                });
                 dialog.show();
             }
         });
@@ -178,6 +186,10 @@ public abstract class FodSDKCore implements IFodSDK {
         ball.hide(activity);
         user = null;
         role = null;
+        for (Pair<String, FodPayResultPollingTask> pair : tasks) {
+            pair.second.stopPolling();
+        }
+        tasks.clear();
         heartBeat.stop();
     }
 
@@ -263,6 +275,42 @@ public abstract class FodSDKCore implements IFodSDK {
             }
             dialog.show();
         }
+    }
+
+    private void checkPayResult(String order) {
+        FodPayResultPollingTask task = new FodPayResultPollingTask(repo, order, new FodCallback<Void>() {
+            @Override
+            public void onValue(Void unused) {
+                getOrderPostData(order);
+                removeTask(order);
+            }
+        });
+        tasks.add(new Pair<>(order, task));
+        task.startPolling();
+    }
+
+    private synchronized void removeTask(String order) {
+        int index = -1;
+        for (Pair<String, FodPayResultPollingTask> pair : tasks) {
+            if (pair.first.equals(order)) {
+                index = tasks.indexOf(pair);
+            }
+        }
+        if (index != -1) {
+            tasks.remove(index);
+        }
+    }
+
+    private void getOrderPostData(String order) {
+        if (user == null) {
+            return;
+        }
+        repo.getOrderPostData(user, order, new FodCallback<String>() {
+            @Override
+            public void onValue(String s) {
+                // TODO
+            }
+        });
     }
 
     public void logEvent(String event, FodRole role) {

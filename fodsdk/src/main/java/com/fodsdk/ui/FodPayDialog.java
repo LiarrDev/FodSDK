@@ -1,25 +1,31 @@
 package com.fodsdk.ui;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.view.View;
 import android.webkit.JavascriptInterface;
 import android.widget.ImageView;
 
+import com.fodsdk.core.FodCallback;
 import com.fodsdk.core.FodConstants;
+import com.fodsdk.net.response.DoPayResponse;
 import com.fodsdk.ui.view.FodWebView;
 import com.fodsdk.utils.LogUtil;
 import com.fodsdk.utils.ResourceUtil;
+import com.google.gson.Gson;
 
 public class FodPayDialog extends FodBaseDialog {
 
     private final String payToken;
     private FodWebView webView;
     private ImageView ivClose;
+    private FodCallback<String> callback;
 
-    public FodPayDialog(Context context, String payToken) {
+    public FodPayDialog(Context context, String payToken, FodCallback<String> onPayCallback) {
         super(context);
         this.payToken = payToken;
+        this.callback = onPayCallback;
     }
 
     @Override
@@ -49,6 +55,8 @@ public class FodPayDialog extends FodBaseDialog {
 
     private class PayInterface {
 
+        private final Gson gson = new Gson();
+
         @JavascriptInterface
         public void dismissDialog() {
             LogUtil.d("PayInterface dismissDialog");
@@ -58,7 +66,28 @@ public class FodPayDialog extends FodBaseDialog {
         @JavascriptInterface
         public void doPay(String json) {
             LogUtil.d("PayInterface doPay: " + json);
-            // TODO
+            DoPayResponse response = gson.fromJson(json, DoPayResponse.class);
+            if (response == null) {
+                return;
+            }
+            String url = response.getUrl();
+            if (url == null) {
+                return;
+            }
+            if (scheme(response.getUrl())) {
+                try {
+                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                    getContext().startActivity(intent);
+                    callback.onValue(response.getOrder());
+                    dismiss();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        private boolean scheme(String url) {
+            return url.startsWith(FodConstants.SCHEME.WECHAT) || url.startsWith(FodConstants.SCHEME.ALIPAY);
         }
     }
 }

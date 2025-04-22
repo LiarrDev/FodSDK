@@ -8,8 +8,10 @@ import com.fodsdk.entities.FodGameConfig;
 import com.fodsdk.entities.FodPayEntity;
 import com.fodsdk.entities.FodRole;
 import com.fodsdk.entities.FodUser;
+import com.fodsdk.net.api.ApiCheckOrderStatus;
 import com.fodsdk.net.api.ApiEvent;
 import com.fodsdk.net.api.ApiGetMessage;
+import com.fodsdk.net.api.ApiGetOrderPostData;
 import com.fodsdk.net.api.ApiSetPayInfo;
 import com.fodsdk.net.api.ApiInit;
 import com.fodsdk.net.api.ApiLogin;
@@ -314,6 +316,36 @@ public class FodRepository {
         } catch (JsonSyntaxException e) {
             e.printStackTrace();
         }
+    }
+
+    public void getOrderStatus(String order, FodCallback<Boolean> callback) {
+        Map<String, String> map = new HashMap<>();
+        map.put("order", order);
+        FodNet.post(new ApiCheckOrderStatus(), map, new FodNet.Callback() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    JSONObject rsp = new JSONObject(response);
+                    boolean status = rsp.optBoolean("status");
+                    callback.onValue(status);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    public void getOrderPostData(FodUser user, String order, FodCallback<String> callback) {
+        String json = gson.toJson(config);
+        Map<String, String> map = gson.fromJson(json, Map.class);
+        map.put("uid", user.getUid());
+        map.put("order", order);
+        FodNet.post(new ApiGetOrderPostData(), map, new FodNet.Callback() {
+            @Override
+            public void onResponse(String response) {
+                // TODO
+            }
+        });
     }
 
     public void logEvent(String event, Map<String, String> extendMap) {
