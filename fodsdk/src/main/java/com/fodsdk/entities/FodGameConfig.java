@@ -20,6 +20,8 @@ public class FodGameConfig {
     private String pcId;
     @SerializedName("cid")
     private String cId;
+    @SerializedName("ptid")
+    private String ptId;
     @SerializedName("adid")
     private String adId;
     @SerializedName("sdkver")
@@ -89,6 +91,14 @@ public class FodGameConfig {
         this.cId = cId;
     }
 
+    public String getPtId() {
+        return ptId;
+    }
+
+    public void setPtId(String ptId) {
+        this.ptId = ptId;
+    }
+
     public String getAdId() {
         return adId;
     }
@@ -116,6 +126,7 @@ public class FodGameConfig {
                 ", pkId='" + pkId + '\'' +
                 ", pcId='" + pcId + '\'' +
                 ", cId='" + cId + '\'' +
+                ", ptId='" + ptId + '\'' +
                 ", adId='" + adId + '\'' +
                 ", sdkVer='" + sdkVer + '\'' +
                 '}';
