@@ -1,5 +1,6 @@
 package com.fodsdk.ui;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -70,23 +71,32 @@ public class FodPayDialog extends FodBaseDialog {
             if (response == null) {
                 return;
             }
-            String url = response.getUrl();
-            if (url == null) {
-                return;
-            }
-            if (scheme(response.getUrl())) {
+            String scheme = response.getScheme();
+            if (scheme != null && isScheme(scheme)) {
                 try {
-                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(scheme));
                     getContext().startActivity(intent);
                     callback.onValue(response.getOrder());
                     dismiss();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+                return;
+            }
+
+            String url = response.getUrl();
+            Activity activity = getOwnerActivity();
+            if (url != null && activity != null) {
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        webView.loadUrl(url);
+                    }
+                });
             }
         }
 
-        private boolean scheme(String url) {
+        private boolean isScheme(String url) {
             return url.startsWith(FodConstants.SCHEME.WECHAT) || url.startsWith(FodConstants.SCHEME.ALIPAY);
         }
     }

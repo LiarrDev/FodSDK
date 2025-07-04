@@ -15,14 +15,13 @@
         android:layout_marginTop="8dp"
         android:layout_marginBottom="6dp"
         android:background="@drawable/fod_shape_radius_16_stroke_1"
-        android:hint="手机号"
+        android:hint="@string/fod_mobile"
         android:inputType="phone"
         android:paddingHorizontal="16dp"
         android:paddingVertical="6dp"
         android:textColor="@android:color/black"
         android:textColorHint="@color/fod_color_acacac"
-        android:textSize="14dp"
-        tools:text="123" />
+        android:textSize="14dp" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -38,14 +37,13 @@
             android:layout_marginEnd="8dp"
             android:layout_weight="1"
             android:background="@drawable/fod_shape_radius_16_stroke_1"
-            android:hint="密码"
+            android:hint="@string/fod_sms_code"
             android:inputType="textPassword"
             android:paddingHorizontal="16dp"
             android:paddingVertical="6dp"
             android:textColor="@android:color/black"
             android:textColorHint="@color/fod_color_acacac"
-            android:textSize="14dp"
-            tools:text="asdfa" />
+            android:textSize="14dp" />
 
         <Button
             android:id="@+id/btn_get_sms"

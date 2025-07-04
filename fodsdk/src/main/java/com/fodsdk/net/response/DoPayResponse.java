@@ -8,6 +8,8 @@ public class DoPayResponse {
     String order;
     @SerializedName("url")
     String url;
+    @SerializedName("scheme")
+    String scheme;
 
     public String getOrder() {
         return order;
@@ -25,11 +27,20 @@ public class DoPayResponse {
         this.url = url;
     }
 
+    public String getScheme() {
+        return scheme;
+    }
+
+    public void setScheme(String scheme) {
+        this.scheme = scheme;
+    }
+
     @Override
     public String toString() {
         return "DoPayResponse{" +
                 "order='" + order + '\'' +
                 ", url='" + url + '\'' +
+                ", scheme='" + scheme + '\'' +
                 '}';
     }
 }
