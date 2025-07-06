@@ -1,9 +1,9 @@
 package com.fodsdk.ui;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Handler;
 import android.view.View;
 import android.webkit.JavascriptInterface;
 import android.widget.ImageView;
@@ -22,6 +22,7 @@ public class FodPayDialog extends FodBaseDialog {
     private FodWebView webView;
     private ImageView ivClose;
     private FodCallback<String> callback;
+    private final Handler handler = new Handler();
 
     public FodPayDialog(Context context, String payToken, FodCallback<String> onPayCallback) {
         super(context);
@@ -72,11 +73,12 @@ public class FodPayDialog extends FodBaseDialog {
                 return;
             }
             String scheme = response.getScheme();
+            String order = response.getOrder();
             if (scheme != null && isScheme(scheme)) {
                 try {
                     Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(scheme));
                     getContext().startActivity(intent);
-                    callback.onValue(response.getOrder());
+                    callback.onValue(order);
                     dismiss();
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -85,12 +87,12 @@ public class FodPayDialog extends FodBaseDialog {
             }
 
             String url = response.getUrl();
-            Activity activity = getOwnerActivity();
-            if (url != null && activity != null) {
-                activity.runOnUiThread(new Runnable() {
+            if (url != null) {
+                handler.post(new Runnable() {
                     @Override
                     public void run() {
                         webView.loadUrl(url);
+                        callback.onValue(order);
                     }
                 });
             }
@@ -99,5 +101,11 @@ public class FodPayDialog extends FodBaseDialog {
         private boolean isScheme(String url) {
             return url.startsWith(FodConstants.SCHEME.WECHAT) || url.startsWith(FodConstants.SCHEME.ALIPAY);
         }
+    }
+
+    @Override
+    public void dismiss() {
+        super.dismiss();
+        handler.removeCallbacksAndMessages(null);
     }
 }
