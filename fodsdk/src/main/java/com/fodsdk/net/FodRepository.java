@@ -16,6 +16,7 @@ import com.fodsdk.net.api.ApiSetPayInfo;
 import com.fodsdk.net.api.ApiInit;
 import com.fodsdk.net.api.ApiLogin;
 import com.fodsdk.net.api.ApiRegisterByAccount;
+import com.fodsdk.net.response.InitResult;
 import com.fodsdk.net.response.LoginResponse;
 import com.fodsdk.net.response.InitResponse;
 import com.fodsdk.net.response.PayInfoResponse;
@@ -48,8 +49,9 @@ public class FodRepository {
      * @param config   fod_game_config.json 的配置
      * @param callback Pair 第一个参数为是否初始化成功，第二个参数为是否显示悬浮球
      */
-    public void init(FodGameConfig config, FodCallback<Pair<Boolean, Boolean>> callback) {
+    public void init(FodGameConfig config, FodCallback<InitResult> callback) {
         this.config = config;
+        InitResult result = new InitResult();
         try {
             String json = gson.toJson(config);
             Map map = gson.fromJson(json, Map.class);
@@ -62,28 +64,28 @@ public class FodRepository {
                         if (status) {
                             JSONObject data = rsp.optJSONObject("data");
                             if (data == null) {
-                                callback.onValue(new Pair<>(false, false));
+                                callback.onValue(result);
                                 return;
                             }
                             InitResponse initResponse = gson.fromJson(data.toString(), InitResponse.class);
-                            boolean showFloat = false;
                             if (initResponse != null) {
-                                showFloat = initResponse.getFloatWindowStatus().isStatus();
+                                result.setShowFloat(initResponse.getFloatWindowStatus().isStatus());
+                                result.setShowMobileLogin(initResponse.getShowPhoneStatus().isStatus());
                             }
-                            callback.onValue(new Pair<>(true, showFloat));
+                            callback.onValue(result);
                         } else {
                             ToastUtil.show(rsp.optString("data"));
-                            callback.onValue(new Pair<>(false, false));
+                            callback.onValue(result);
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
-                        callback.onValue(new Pair<>(false, false));
+                        callback.onValue(result);
                     }
                 }
             });
         } catch (JsonSyntaxException e) {
             e.printStackTrace();
-            callback.onValue(new Pair<>(false, false));
+            callback.onValue(result);
         }
     }
 

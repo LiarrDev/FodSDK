@@ -26,6 +26,7 @@ import com.fodsdk.utils.ToastUtil;
 public class FodLoginDialog extends FodBaseDialog {
 
     private boolean isRegister = false;     // 登录还是注册
+    private final boolean showMobileLogin; // 是否显示手机号登录
     private RadioGroup radioGroup;
     private RadioButton rbAccount, rbSms;
     private View accountLoginLayout, accountRegisterLayout, smsLoginLayout;
@@ -37,9 +38,10 @@ public class FodLoginDialog extends FodBaseDialog {
     private FodCallback<LoginResponse> loginCallback;
     private CountDownTimer timer;
 
-    public FodLoginDialog(Context context, FodRepository repo) {
+    public FodLoginDialog(Context context, FodRepository repo, boolean showMobileLogin) {
         super(context);
         this.repo = repo;
+        this.showMobileLogin = showMobileLogin;
     }
 
     @Override
@@ -65,6 +67,7 @@ public class FodLoginDialog extends FodBaseDialog {
             }
         }));
         radioGroup.check(rbAccount.getId());
+        radioGroup.setVisibility(showMobileLogin ? View.VISIBLE : View.GONE);
 
         btnAccountLogin.setOnClickListener(new View.OnClickListener() {
             @Override

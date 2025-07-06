@@ -13,6 +13,7 @@ import com.fodsdk.entities.FodPayEntity;
 import com.fodsdk.entities.FodRole;
 import com.fodsdk.entities.FodUser;
 import com.fodsdk.net.FodRepository;
+import com.fodsdk.net.response.InitResult;
 import com.fodsdk.net.response.LoginRealInfo;
 import com.fodsdk.net.response.LoginResponse;
 import com.fodsdk.report.FodReport;
@@ -49,6 +50,7 @@ public abstract class FodSDKCore implements IFodSDK {
     private FodRole role;
     private FodFloatingBall ball = new FodFloatingBall();
     private boolean showFloatingBall = false;
+    private boolean showMobileLogin = false;
     private FodHeartBeat heartBeat;
     private final List<Pair<String, FodPayResultPollingTask>> tasks = new ArrayList<>();
 
@@ -60,11 +62,12 @@ public abstract class FodSDKCore implements IFodSDK {
         DeviceUtil.initPrivacy(activity, new FodCallback<Void>() {
             @Override
             public void onValue(Void unused) {
-                repo.init(config, new FodCallback<Pair<Boolean, Boolean>>() {
+                repo.init(config, new FodCallback<InitResult>() {
                     @Override
-                    public void onValue(Pair<Boolean, Boolean> pair) {
-                        callback.onInit(pair.first ? FodConstants.Code.SUCCESS : FodConstants.Code.FAILURE, new Bundle());
-                        showFloatingBall = pair.second;
+                    public void onValue(InitResult initResult) {
+                        callback.onInit(initResult.isSuccess() ? FodConstants.Code.SUCCESS : FodConstants.Code.FAILURE, new Bundle());
+                        showFloatingBall = initResult.isShowFloat();
+                        showMobileLogin = initResult.isShowMobileLogin();
                     }
                 });
                 logEvent(FodConstants.Event.SCENE_OPEN, null);
@@ -77,7 +80,7 @@ public abstract class FodSDKCore implements IFodSDK {
 
     @Override
     public void login(Activity activity) {
-        FodLoginDialog dialog = new FodLoginDialog(activity, repo);
+        FodLoginDialog dialog = new FodLoginDialog(activity, repo, showMobileLogin);
         FodCallback<LoginResponse> callback = new FodCallback<LoginResponse>() {
             @Override
             public void onValue(LoginResponse response) {
