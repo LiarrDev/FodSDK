@@ -2,6 +2,7 @@ package com.fodsdk.core;
 
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Pair;
 
 import com.fodsdk.net.FodRepository;
 
@@ -46,11 +47,15 @@ public class FodPayResultPollingTask {
     }
 
     private void getOrderStatus() {
-        repo.getOrderStatus(order, new FodCallback<Boolean>() {
+        repo.getOrderStatus(order, new FodCallback<Pair<Boolean, Boolean>>() {
             @Override
-            public void onValue(Boolean success) {
+            public void onValue(Pair<Boolean, Boolean> pair) {
+                boolean success = pair.first;
+                boolean cancel = pair.second;
                 if (success) {
                     callback.onValue(null);
+                }
+                if (cancel) {
                     stopPolling();
                 }
             }

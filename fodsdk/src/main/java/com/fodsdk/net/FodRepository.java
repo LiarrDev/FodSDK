@@ -320,7 +320,10 @@ public class FodRepository {
         }
     }
 
-    public void getOrderStatus(String order, FodCallback<Boolean> callback) {
+    /**
+     * 回调第一个参数为是否成功，第二个参数为是否强制停止轮询
+     */
+    public void getOrderStatus(String order, FodCallback<Pair<Boolean, Boolean>> callback) {
         Map<String, String> map = new HashMap<>();
         map.put("order", order);
         FodNet.post(new ApiCheckOrderStatus(), map, new FodNet.Callback() {
@@ -329,7 +332,13 @@ public class FodRepository {
                 try {
                     JSONObject rsp = new JSONObject(response);
                     boolean status = rsp.optBoolean("status");
-                    callback.onValue(status);
+                    if (status) {
+                        boolean payFinish = rsp.optInt("data") == 1;
+                        callback.onValue(new Pair<>(payFinish, false));
+                    } else {
+                        ToastUtil.show(rsp.optString("data"));
+                        callback.onValue(new Pair<>(false, true));
+                    }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

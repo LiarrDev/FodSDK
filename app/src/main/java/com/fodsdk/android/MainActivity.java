@@ -76,7 +76,7 @@ public class MainActivity extends Activity {
             payEntity.setGoodsCount(1);
             payEntity.setGoodsName("商品名称");
             payEntity.setGoodsDesc("商品描述");
-            payEntity.setPrice(100);
+            payEntity.setPrice(1);
             payEntity.setExt("");
             payEntity.setRole(getRole());
             FodSDK.get().pay(this, payEntity);
