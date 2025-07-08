@@ -160,7 +160,7 @@ public abstract class FodSDKCore implements IFodSDK {
                 FodPayDialog dialog = new FodPayDialog(activity, payToken, new FodCallback<String>() {
                     @Override
                     public void onValue(String order) {
-                        checkPayResult(order);
+                        checkPayResult(order, entity);
                     }
                 });
                 dialog.show();
@@ -256,7 +256,7 @@ public abstract class FodSDKCore implements IFodSDK {
     }
 
     private void showUserCenter(Activity activity) {
-        String url = repo.getUserCenterUrl(role);
+        String url = repo.getUserCenterUrl(user, role);
         FodWebDialog dialog = new FodWebDialog(activity, url);
         dialog.show();
     }
@@ -280,11 +280,11 @@ public abstract class FodSDKCore implements IFodSDK {
         }
     }
 
-    private void checkPayResult(String order) {
+    private void checkPayResult(String order, FodPayEntity entity) {
         FodPayResultPollingTask task = new FodPayResultPollingTask(repo, order, new FodCallback<Void>() {
             @Override
             public void onValue(Void unused) {
-                getOrderPostData(order);
+                getOrderPostData(order, entity);
                 removeTask(order);
             }
         });
@@ -297,6 +297,7 @@ public abstract class FodSDKCore implements IFodSDK {
         for (Pair<String, FodPayResultPollingTask> pair : tasks) {
             if (pair.first.equals(order)) {
                 index = tasks.indexOf(pair);
+                pair.second.stopPolling();
             }
         }
         if (index != -1) {
@@ -304,14 +305,16 @@ public abstract class FodSDKCore implements IFodSDK {
         }
     }
 
-    private void getOrderPostData(String order) {
+    private void getOrderPostData(String order, FodPayEntity entity) {
         if (user == null) {
             return;
         }
-        repo.getOrderPostData(user, order, new FodCallback<String>() {
+        repo.getOrderPostData(user, order, entity.getPrice(), new FodCallback<String>() {
             @Override
-            public void onValue(String s) {
-                // TODO
+            public void onValue(String money) {
+                Map<String, String> map = new HashMap<>();
+                map.put("money", money);
+                FodReport.get().onPayEvent(activity, map);
             }
         });
     }

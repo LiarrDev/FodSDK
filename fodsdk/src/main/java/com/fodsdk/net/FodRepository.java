@@ -275,16 +275,8 @@ public class FodRepository {
             map.put("roleId", entity.getRole().getRoleId());
             map.put("serverId", entity.getRole().getServerId());
             map.put("ext", entity.getExt());
+            map.put("money", priceToMoney(entity.getPrice()));
             map.putAll(getDeviceParams());
-
-            String price = String.valueOf(entity.getPrice());
-            String money;
-            if (price.length() > 2) {
-                money = price.substring(0, price.length() - 2) + "." + price.substring(price.length() - 2);
-            } else {
-                money = "0." + (price.length() == 1 ? "0" : "") + price;
-            }
-            map.put("money", money);
 
             showLoading();
             FodNet.post(new ApiSetPayInfo(), map, new FodNet.Callback() {
@@ -346,15 +338,28 @@ public class FodRepository {
         });
     }
 
-    public void getOrderPostData(FodUser user, String order, FodCallback<String> callback) {
+    public void getOrderPostData(FodUser user, String order, int price, FodCallback<String> callback) {
         String json = gson.toJson(config);
         Map<String, String> map = gson.fromJson(json, Map.class);
         map.put("uid", user.getUid());
         map.put("order", order);
+        map.put("money", priceToMoney(price));
         FodNet.post(new ApiGetOrderPostData(), map, new FodNet.Callback() {
             @Override
             public void onResponse(String response) {
-                // TODO
+                try {
+                    JSONObject rsp = new JSONObject(response);
+                    boolean status = rsp.optBoolean("status");
+                    if (status) {
+                        JSONObject data = rsp.optJSONObject("data");
+                        if (data != null) {
+                            String money = data.optString("money");
+                            callback.onValue(money);
+                        }
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
         });
     }
@@ -389,10 +394,13 @@ public class FodRepository {
         });
     }
 
-    public String getUserCenterUrl(FodRole role) {
+    public String getUserCenterUrl(FodUser user, FodRole role) {
         String json = gson.toJson(config);
         Map<String, String> map = gson.fromJson(json, Map.class);
         map.putAll(getDeviceParams());
+        if (user != null) {
+            map.put("uid", user.getUid());
+        }
         if (role != null) {
             map.put("roleId", role.getRoleId());
             map.put("roleName", role.getRoleName());
@@ -438,6 +446,17 @@ public class FodRepository {
         map.put("idfa", "");
         map.put("caid", "");
         return map;
+    }
+
+    private String priceToMoney(int price) {
+        String priceStr = String.valueOf(price);
+        String money;
+        if (priceStr.length() > 2) {
+            money = priceStr.substring(0, priceStr.length() - 2) + "." + priceStr.substring(priceStr.length() - 2);
+        } else {
+            money = "0." + (priceStr.length() == 1 ? "0" : "") + priceStr;
+        }
+        return money;
     }
 
     public FodGameConfig getGameConfig() {
