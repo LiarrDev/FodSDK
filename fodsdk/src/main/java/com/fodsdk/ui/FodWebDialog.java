@@ -1,5 +1,6 @@
 package com.fodsdk.ui;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.os.Bundle;
@@ -7,8 +8,11 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 
+import com.fodsdk.core.FodSDK;
+import com.fodsdk.utils.ActivityUtil;
 import com.fodsdk.utils.DeviceUtil;
 import com.fodsdk.utils.LogUtil;
 import com.fodsdk.utils.ResourceUtil;
@@ -30,6 +34,7 @@ public class FodWebDialog extends AlertDialog {
         resize();
 
         WebView webView = rootView.findViewById(ResourceUtil.getViewId("web_view"));
+        webView.addJavascriptInterface(new WebInterface(), "Android");
         LogUtil.v("FodWebDialog url: " + url);
         webView.loadUrl(url);
     }
@@ -58,6 +63,28 @@ public class FodWebDialog extends AlertDialog {
         Window window = getWindow();
         if (window != null) {
             window.getDecorView().setSystemUiVisibility(flag);
+        }
+    }
+
+    private class WebInterface {
+
+        @JavascriptInterface
+        public void dismissDialog() {
+            LogUtil.d("WebInterface dismissDialog");
+            dismiss();
+        }
+
+        @JavascriptInterface
+        public void switchAccount() {
+            LogUtil.d("WebInterface switchAccount");
+            dismiss();
+            Activity activity;
+            if (getContext() instanceof Activity) {
+                activity = ((Activity) getContext());
+            } else {
+                activity = ActivityUtil.getTopActivity();
+            }
+            FodSDK.get().logout(activity);
         }
     }
 }
