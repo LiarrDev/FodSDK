@@ -1,9 +1,7 @@
 package com.fodsdk.ui;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
@@ -17,7 +15,7 @@ import com.fodsdk.utils.DeviceUtil;
 import com.fodsdk.utils.LogUtil;
 import com.fodsdk.utils.ResourceUtil;
 
-public class FodWebDialog extends AlertDialog {
+public class FodWebDialog extends FodBaseDialog {
 
     private final String url;
 
@@ -27,16 +25,17 @@ public class FodWebDialog extends AlertDialog {
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        View rootView = View.inflate(getContext(), ResourceUtil.getLayoutId("fod_dialog_web"), null);
-        setContentView(rootView);
+    protected void initViews(View rootView) {
         resize();
-
         WebView webView = rootView.findViewById(ResourceUtil.getViewId("web_view"));
         webView.addJavascriptInterface(new WebInterface(), "Android");
         LogUtil.v("FodWebDialog url: " + url);
         webView.loadUrl(url);
+    }
+
+    @Override
+    protected String getLayoutName() {
+        return "fod_dialog_web";
     }
 
     private void resize() {
