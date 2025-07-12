@@ -85,5 +85,11 @@ public class FodWebDialog extends FodBaseDialog {
             }
             FodSDK.get().logout(activity);
         }
+
+        @JavascriptInterface
+        public void realNameFinish() {  // 冗余接口，原来是为了刷新本地实名信息，但是目前不需要
+            LogUtil.d("WebInterface realNameFinish");
+            dismiss();
+        }
     }
 }
