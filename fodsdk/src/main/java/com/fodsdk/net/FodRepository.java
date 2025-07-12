@@ -400,6 +400,7 @@ public class FodRepository {
         map.putAll(getDeviceParams());
         if (user != null) {
             map.put("uid", user.getUid());
+            map.put("token", user.getToken());
         }
         if (role != null) {
             map.put("roleId", role.getRoleId());

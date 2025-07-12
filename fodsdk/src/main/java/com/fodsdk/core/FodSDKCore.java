@@ -264,9 +264,6 @@ public abstract class FodSDKCore implements IFodSDK {
     }
 
     private void showRealNameDialog(Activity activity, LoginResponse response) {
-        /*if (true) {
-            return; // TODO: test, remove this later
-        }*/
         LoginRealInfo realInfo = response.getRealInfo();
         if (realInfo.getIsRealName() == 0) {
             UserSettings.setTodayAllowPlayTime(realInfo.getTime());
