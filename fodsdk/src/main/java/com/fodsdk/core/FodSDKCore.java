@@ -284,6 +284,7 @@ public abstract class FodSDKCore implements IFodSDK {
             @Override
             public void onValue(Void unused) {
                 getOrderPostData(order, entity);
+                platformCallback.onPay(FodConstants.Code.SUCCESS, new Bundle());
                 removeTask(order);
             }
         });

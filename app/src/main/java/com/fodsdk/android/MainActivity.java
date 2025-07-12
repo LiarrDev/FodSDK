@@ -49,7 +49,9 @@ public class MainActivity extends Activity {
 
             @Override
             public void onPay(int code, Bundle bundle) {
-
+                if (code == FodConstants.Code.SUCCESS) {
+                    Log.d(TAG, "Pay Success");
+                }
             }
 
             @Override
