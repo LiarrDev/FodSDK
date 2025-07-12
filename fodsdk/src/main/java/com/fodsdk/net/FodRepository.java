@@ -63,6 +63,7 @@ public class FodRepository {
                         JSONObject rsp = new JSONObject(response);
                         boolean status = rsp.optBoolean("status");
                         if (status) {
+                            result.setSuccess(true);
                             JSONObject data = rsp.optJSONObject("data");
                             if (data == null) {
                                 callback.onValue(result);
