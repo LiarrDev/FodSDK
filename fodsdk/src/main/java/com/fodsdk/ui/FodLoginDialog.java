@@ -5,12 +5,15 @@ import android.os.CountDownTimer;
 import android.text.Html;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
+import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.LinkMovementMethod;
+import android.text.method.PasswordTransformationMethod;
 import android.text.style.ClickableSpan;
 import android.text.style.URLSpan;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -20,8 +23,11 @@ import com.fodsdk.core.FodCallback;
 import com.fodsdk.net.FodRepository;
 import com.fodsdk.net.api.ApiUserAgreement;
 import com.fodsdk.net.response.LoginResponse;
+import com.fodsdk.settings.GlobalSettings;
 import com.fodsdk.utils.ResourceUtil;
 import com.fodsdk.utils.ToastUtil;
+
+import java.util.Random;
 
 public class FodLoginDialog extends FodBaseDialog {
 
@@ -32,7 +38,7 @@ public class FodLoginDialog extends FodBaseDialog {
     private View accountLoginLayout, accountRegisterLayout, smsLoginLayout;
     private EditText etLoginAccount, etLoginPassword, etRegisterAccount, etRegisterPassword, etConfirmPassword, etMobile, etSmsCode;
     private Button btnAccountLogin, btnAccountRegister, btnGetSms, btnSmsLogin;
-    private CheckBox cbMobileAgreement, cbRegisterAgreement, cbLoginAgreement;
+    private CheckBox cbMobileAgreement, cbRegisterAgreement, cbLoginAgreement, cbRegisterPassword, cbConfirmPassword;
     private TextView tvAccountRegister, tvAccountLogin;
     private final FodRepository repo;
     private FodCallback<LoginResponse> loginCallback;
@@ -102,6 +108,21 @@ public class FodLoginDialog extends FodBaseDialog {
                 showAccountLoginLayout();
             }
         });
+        // 两个眼睛联动
+        cbRegisterPassword.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                cbConfirmPassword.setChecked(isChecked);
+                registerPasswordVisible(isChecked);
+            }
+        });
+        cbConfirmPassword.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                cbRegisterPassword.setChecked(isChecked);
+                registerPasswordVisible(isChecked);
+            }
+        });
 
         btnGetSms.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -117,6 +138,14 @@ public class FodLoginDialog extends FodBaseDialog {
                 doSmsLogin();
             }
         });
+
+        if (!GlobalSettings.hasLoginBefore()) { // 如果之前没有登录过任何账号，则显示账号注册，并生成随机账号
+            etRegisterAccount.setText(randomAccount());
+            String password = randomPassword();
+            etRegisterPassword.setText(password);
+            etConfirmPassword.setText(password);
+            tvAccountRegister.performClick();
+        }
     }
 
     private void doAccountLogin() {
@@ -216,6 +245,38 @@ public class FodLoginDialog extends FodBaseDialog {
         smsLoginLayout.setVisibility(View.GONE);
     }
 
+    private void registerPasswordVisible(boolean visible) {
+        if (visible) {
+            etRegisterPassword.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
+            etConfirmPassword.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
+        } else {
+            etRegisterPassword.setTransformationMethod(PasswordTransformationMethod.getInstance());
+            etConfirmPassword.setTransformationMethod(PasswordTransformationMethod.getInstance());
+        }
+    }
+
+    public String randomAccount() {
+        int length = 8; // 生成 8 位随机数
+        Random random = new Random();
+        StringBuilder sb = new StringBuilder(length);
+        for (int i = 0; i < length; i++) {
+            sb.append(random.nextInt(10));
+        }
+        return "zx" + sb;
+    }
+
+    public String randomPassword() {
+        int length = 6;
+        String characters = "abcdefghijklmnopqrstuvwxyz0123456789"; // 小写字母和数字的集合
+        Random random = new Random();
+        StringBuilder sb = new StringBuilder(length);
+        for (int i = 0; i < length; i++) {
+            int index = random.nextInt(characters.length());
+            sb.append(characters.charAt(index));
+        }
+        return sb.toString();
+    }
+
     private void clearFocus() {
         hideSoftKeyBoard(radioGroup);
         etLoginAccount.clearFocus();
@@ -259,6 +320,8 @@ public class FodLoginDialog extends FodBaseDialog {
         btnAccountRegister = rootView.findViewById(ResourceUtil.getViewId("btn_account_register"));
         cbRegisterAgreement = rootView.findViewById(ResourceUtil.getViewId("cb_register_agreement"));
         tvAccountLogin = rootView.findViewById(ResourceUtil.getViewId("tv_account_login"));
+        cbRegisterPassword = rootView.findViewById(ResourceUtil.getViewId("cb_register_password"));
+        cbConfirmPassword = rootView.findViewById(ResourceUtil.getViewId("cb_confirm_password"));
 
         smsLoginLayout = rootView.findViewById(ResourceUtil.getViewId("layout_sms_login"));
         etMobile = rootView.findViewById(ResourceUtil.getViewId("et_mobile"));

@@ -20,6 +20,7 @@ import com.fodsdk.net.response.InitResult;
 import com.fodsdk.net.response.LoginResponse;
 import com.fodsdk.net.response.InitResponse;
 import com.fodsdk.net.response.PayInfoResponse;
+import com.fodsdk.settings.GlobalSettings;
 import com.fodsdk.ui.FodLoadingDialog;
 import com.fodsdk.ui.FodTipsDialog;
 import com.fodsdk.utils.ActivityUtil;
@@ -207,6 +208,7 @@ public class FodRepository {
             JSONObject rsp = new JSONObject(response);
             boolean status = rsp.optBoolean("status");
             if (status) {
+                GlobalSettings.setLoginBefore(true);
                 JSONObject data = rsp.optJSONObject("data");
                 if (data != null) {
                     LoginResponse registerResponse = gson.fromJson(data.toString(), LoginResponse.class);
