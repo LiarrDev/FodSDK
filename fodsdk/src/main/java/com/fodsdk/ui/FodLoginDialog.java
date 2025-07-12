@@ -139,7 +139,10 @@ public class FodLoginDialog extends FodBaseDialog {
             }
         });
 
-        if (!GlobalSettings.hasLoginBefore()) { // 如果之前没有登录过任何账号，则显示账号注册，并生成随机账号
+        if (GlobalSettings.hasLoginBefore()) {
+            etLoginAccount.setText(GlobalSettings.getLastLoginAccount());
+            etLoginPassword.setText(GlobalSettings.getLastLoginPassword());
+        } else { // 如果之前没有登录过任何账号，则显示账号注册，并生成随机账号
             etRegisterAccount.setText(randomAccount());
             String password = randomPassword();
             etRegisterPassword.setText(password);

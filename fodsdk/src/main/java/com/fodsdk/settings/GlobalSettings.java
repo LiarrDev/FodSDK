@@ -9,6 +9,8 @@ public class GlobalSettings {
 
     private static final String IS_FIRST_LAUNCH = "is_first_launch";
     private static final String LAST_LOGIN_TOKEN = "last_login_token";
+    private static final String LAST_LOGIN_ACCOUNT = "last_login_account";
+    private static final String LAST_LOGIN_PASSWORD = "last_login_password";
     private static final String LOGIN_BEFORE = "login_before";
     private static final String ERROR_SET = "error_set";
 
@@ -34,6 +36,22 @@ public class GlobalSettings {
 
     public static void setLastLoginToken(String token) {
         SPUtil.put(LAST_LOGIN_TOKEN, token);
+    }
+
+    public static String getLastLoginAccount() {
+        return SPUtil.get(LAST_LOGIN_ACCOUNT, "");
+    }
+
+    public static void setLastLoginAccount(String account) {
+        SPUtil.put(LAST_LOGIN_ACCOUNT, account);
+    }
+
+    public static String getLastLoginPassword() {
+        return SPUtil.get(LAST_LOGIN_PASSWORD, "");
+    }
+
+    public static void setLastLoginPassword(String password) {
+        SPUtil.put(LAST_LOGIN_PASSWORD, password);
     }
 
     public static void addError(String error) {

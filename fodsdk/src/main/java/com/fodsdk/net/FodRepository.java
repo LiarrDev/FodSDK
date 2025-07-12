@@ -105,6 +105,7 @@ public class FodRepository {
                 @Override
                 public void onResponse(String response) {
                     hideLoading();
+                    cacheAccount(response, account, registerPassword);
                     handleLogin(response, callback);
                 }
 
@@ -132,6 +133,7 @@ public class FodRepository {
             @Override
             public void onResponse(String response) {
                 hideLoading();
+                cacheAccount(response, account, password);
                 handleLogin(response, callback);
             }
 
@@ -216,6 +218,19 @@ public class FodRepository {
                 }
             } else {
                 ToastUtil.show(rsp.optString("data"));
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void cacheAccount(String response, String account, String password) {
+        try {
+            JSONObject rsp = new JSONObject(response);
+            boolean status = rsp.optBoolean("status");
+            if (status) {
+                GlobalSettings.setLastLoginAccount(account);
+                GlobalSettings.setLastLoginPassword(password);
             }
         } catch (JSONException e) {
             e.printStackTrace();
