@@ -3,11 +3,11 @@ plugins {
 }
 
 android {
-    namespace = "com.fodsdk.android"
+    namespace = "com.fodsdk.android.demo"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.fodsdk.android"
+        applicationId = "com.fodsdk.android.demo"
         minSdk = 24
         targetSdk = 34
         versionCode = 1

@@ -9,7 +9,7 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 
-import com.fodsdk.android.databinding.ActivityMainBinding;
+import com.fodsdk.android.demo.databinding.ActivityMainBinding;
 import com.fodsdk.core.FodConstants;
 import com.fodsdk.core.FodSDK;
 import com.fodsdk.core.IPlatformCallback;
