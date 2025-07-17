@@ -328,19 +328,15 @@ public abstract class FodSDKCore implements IFodSDK {
             case FodConstants.Event.SCENE_ENTRY:
             case FodConstants.Event.SCENE_CREATE_ROLE:
             case FodConstants.Event.SCENE_LEVEL:
+            case FodConstants.Event.SCENE_ONLINE:
                 if (role != null) {
                     this.role = role;
-                    map.put("serverId", role.getServerId());
-                    map.put("roleId", role.getRoleId());
-                    map.put("roleName", role.getRoleName());
-                    map.put("roleLevel", String.valueOf(role.getRoleLevel()));
+                    map.put("serverId", role.getServerId() == null ? "" : role.getServerId());
+                    map.put("roleId", role.getRoleId() == null ? "" : role.getRoleId());
+                    map.put("roleName", role.getRoleName() == null ? "" : role.getRoleName());
+                    map.put("roleLevel", role.getRoleId() == null ? "" : String.valueOf(role.getRoleLevel()));
                 }
                 break;
-            case FodConstants.Event.SCENE_ONLINE:
-                map.put("serverId", role == null ? "" : role.getServerId());
-                map.put("roleId", role == null ? "" : role.getRoleId());
-                map.put("roleName", role == null ? "" : role.getRoleName());
-                map.put("roleLevel", role == null ? "" : String.valueOf(role.getRoleLevel()));
             default:
                 break;
         }
