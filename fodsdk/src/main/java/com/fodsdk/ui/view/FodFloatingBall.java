@@ -41,13 +41,15 @@ public class FodFloatingBall implements IFloatingView {
 
     @Override
     public void hide(Activity activity) {
-        if (floatingRoot != null && isShowing) {
-            if (activity != null) {
+        if (activity != null && floatingRoot != null && isShowing) {
+            try {
                 WindowManager windowManager = (WindowManager) activity.getSystemService(Context.WINDOW_SERVICE);
                 windowManager.removeView(floatingRoot);
-                isShowing = false;
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
+        isShowing = false;
     }
 
     @Override
