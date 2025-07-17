@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 
@@ -72,13 +73,15 @@ public class MainActivity extends Activity {
         binding.btnLogin.setOnClickListener(view -> FodSDK.get().login(this));
         binding.btnLogout.setOnClickListener(view -> FodSDK.get().logout(this));
         binding.btnPay.setOnClickListener(v -> {
+            String priceStr = binding.etPrice.getText().toString();
+            int price = TextUtils.isEmpty(priceStr) ? 1 : Integer.parseInt(priceStr);
             FodPayEntity payEntity = new FodPayEntity();
             payEntity.setOrderId(String.valueOf(System.currentTimeMillis()));
             payEntity.setGoodsId("101");
             payEntity.setGoodsCount(1);
             payEntity.setGoodsName("商品名称");
             payEntity.setGoodsDesc("商品描述");
-            payEntity.setPrice(1);
+            payEntity.setPrice(price);
             payEntity.setExt("");
             payEntity.setRole(getRole());
             FodSDK.get().pay(this, payEntity);
