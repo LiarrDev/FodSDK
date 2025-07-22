@@ -55,6 +55,11 @@ class InternalReport implements IReport {
     }
 
     @Override
+    public void onConfigReady(Activity activity) {
+        LogUtil.v("Report onConfigReady");
+    }
+
+    @Override
     public void onRegisterEvent(Context context, Map<String, String> map) {
         LogUtil.v("Report onRegisterEvent: " + map.toString());
     }

@@ -93,7 +93,9 @@ public abstract class FodSDKCore implements IFodSDK {
 
                 GlobalSettings.setLastLoginToken(user.getToken());
                 if (response.getIsNewRegister() == 1) {
-                    FodReport.get().onRegisterEvent(activity, new HashMap<>());
+                    Map<String,String > map = new HashMap<>();
+                    map.put("type", String.valueOf(response.getType()));
+                    FodReport.get().onRegisterEvent(activity, map);
                 }
 
                 // 回调给 CP
@@ -252,6 +254,7 @@ public abstract class FodSDKCore implements IFodSDK {
         try {
             config = gson.fromJson(ResourceUtil.readAssets2String(FodConstants.Inner.GAME_CONFIG_FILE), FodGameConfig.class);
             LogUtil.v("config: " + config);
+            FodReport.get().onConfigReady(activity);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -313,7 +316,11 @@ public abstract class FodSDKCore implements IFodSDK {
             @Override
             public void onValue(String money) {
                 Map<String, String> map = new HashMap<>();
-                map.put("money", money);
+                map.put(FodConstants.PAY.GOODS_PRICE, money);
+                map.put(FodConstants.PAY.GOODS_ID, entity.getGoodsId());
+                map.put(FodConstants.PAY.GOODS_NAME, entity.getGoodsName());
+                map.put(FodConstants.PAY.GOODS_DESC, entity.getGoodsDesc());
+                map.put(FodConstants.PAY.GOODS_COUNT, String.valueOf(entity.getGoodsCount()));
                 FodReport.get().onPayEvent(activity, map);
             }
         });

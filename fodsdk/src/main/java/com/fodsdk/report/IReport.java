@@ -25,6 +25,8 @@ public interface IReport {
 
     void onInit(Activity activity);
 
+    void onConfigReady(Activity activity);
+
     void onRegisterEvent(Context context, Map<String, String> map);
 
     void onPayEvent(Context context, Map<String, String> map);

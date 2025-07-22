@@ -31,4 +31,13 @@ public class FodConstants {
         public static final String WECHAT = "weixin://";
         public static final String ALIPAY = "alipays://";
     }
+
+    public static class PAY {
+        public static final String GOODS_ID = "goods_id";
+        public static final String GOODS_NAME = "goods_name";
+        public static final String GOODS_DESC = "goods_desc";
+        public static final String GOODS_COUNT = "goods_count";
+        public static final String GOODS_PRICE = "goods_price";
+        public static final String PAY_TYPE = "pay_type";
+    }
 }
