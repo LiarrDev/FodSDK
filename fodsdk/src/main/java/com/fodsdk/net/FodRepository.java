@@ -356,7 +356,7 @@ public class FodRepository {
         });
     }
 
-    public void getOrderPostData(FodUser user, String order, int price, FodCallback<String> callback) {
+    public void getOrderPostData(FodUser user, String order, int price, FodCallback<Pair<String, String>> callback) {
         String json = gson.toJson(config);
         Map<String, String> map = gson.fromJson(json, Map.class);
         map.put("uid", user.getUid());
@@ -371,8 +371,9 @@ public class FodRepository {
                     if (status) {
                         JSONObject data = rsp.optJSONObject("data");
                         if (data != null) {
+                            String type = data.optString("type");
                             String money = data.optString("money");
-                            callback.onValue(money);
+                            callback.onValue(new Pair<>(type, money));
                         }
                     }
                 } catch (JSONException e) {

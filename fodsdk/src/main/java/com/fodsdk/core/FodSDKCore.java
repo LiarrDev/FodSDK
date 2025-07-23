@@ -93,7 +93,7 @@ public abstract class FodSDKCore implements IFodSDK {
 
                 GlobalSettings.setLastLoginToken(user.getToken());
                 if (response.getIsNewRegister() == 1) {
-                    Map<String,String > map = new HashMap<>();
+                    Map<String, String> map = new HashMap<>();
                     map.put("type", String.valueOf(response.getType()));
                     FodReport.get().onRegisterEvent(activity, map);
                 }
@@ -312,15 +312,18 @@ public abstract class FodSDKCore implements IFodSDK {
         if (user == null) {
             return;
         }
-        repo.getOrderPostData(user, order, entity.getPrice(), new FodCallback<String>() {
+        repo.getOrderPostData(user, order, entity.getPrice(), new FodCallback<Pair<String, String>>() {
             @Override
-            public void onValue(String money) {
+            public void onValue(Pair<String, String> pair) {
+                String type = pair.first;
+                String money = pair.second;
                 Map<String, String> map = new HashMap<>();
                 map.put(FodConstants.PAY.GOODS_PRICE, money);
                 map.put(FodConstants.PAY.GOODS_ID, entity.getGoodsId());
                 map.put(FodConstants.PAY.GOODS_NAME, entity.getGoodsName());
                 map.put(FodConstants.PAY.GOODS_DESC, entity.getGoodsDesc());
                 map.put(FodConstants.PAY.GOODS_COUNT, String.valueOf(entity.getGoodsCount()));
+                map.put(FodConstants.PAY.PAY_TYPE, type);
                 FodReport.get().onPayEvent(activity, map);
             }
         });
