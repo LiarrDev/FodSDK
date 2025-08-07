@@ -16,13 +16,17 @@ import android.view.WindowManager;
 
 import com.fodsdk.FodBaseApplication;
 import com.fodsdk.core.FodCallback;
+import com.hihonor.ads.identifier.AdvertisingIdClient;
 
 import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 public class DeviceUtil {
 
     private static String imei = "00000000-0000-0000-0000-000000000000";
     private static String oaid = "00000000-0000-0000-0000-000000000000";
+    private static final Executor executor = Executors.newCachedThreadPool();
 
     public static void initPrivacy(Activity activity, FodCallback<Void> callback) {
         initOaId(activity, new FodCallback<Void>() {
@@ -39,6 +43,17 @@ public class DeviceUtil {
     }
 
     public static void initOaId(Context context, FodCallback<Void> callback) {
+        if (android.os.Build.MANUFACTURER.contains("HONOR")) {
+            initHonorOaId(context, callback);
+        } else {
+            initNormalOaId(context, callback);
+        }
+    }
+
+    /**
+     * 获取常规 OAID
+     */
+    private static void initNormalOaId(Context context, FodCallback<Void> callback) {
         OaIdHelper helper = new OaIdHelper(new OaIdHelper.AppIdsUpdater() {
             @Override
             public void onIdsUpdate(String id) {
@@ -52,6 +67,29 @@ public class DeviceUtil {
             }
         });
         helper.getDeviceIds(context);
+    }
+
+    /**
+     * 获取荣耀手机的 OAID（MSA SDK v1.0.26 以上才支持荣耀，所以单独依赖）
+     */
+    private static void initHonorOaId(Context context, FodCallback<Void> callback) {
+        executor.execute(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    AdvertisingIdClient.Info info = AdvertisingIdClient.getAdvertisingIdInfo(context);
+                    if (null == info) {
+                        LogUtil.e("OAID 为空");
+                    } else {
+                        oaid = info.id;
+                        LogUtil.i("OAID:" + info.id);
+                    }
+                } catch (Exception e) {
+                    LogUtil.e("Honor 获取 OAID Exception: " + e);
+                }
+                callback.onValue(null);
+            }
+        });
     }
 
     public static String getOaId() {
