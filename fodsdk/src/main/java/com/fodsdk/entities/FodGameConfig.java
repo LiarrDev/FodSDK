@@ -25,7 +25,7 @@ public class FodGameConfig {
     @SerializedName("adid")
     private String adId;
     @SerializedName("sdkver")
-    private String sdkVer;
+    private String sdkVer = "1.1.0";
 
     public String getGId() {
         return gId;
