@@ -79,5 +79,17 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="退出游戏" />
+
+        <Button
+            android:id="@+id/btn_oaId"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="荣耀 OAID" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:id="@+id/tv_oaId"
+            android:text="OAID: "
+            android:layout_height="wrap_content"/>
     </LinearLayout>
 </ScrollView>

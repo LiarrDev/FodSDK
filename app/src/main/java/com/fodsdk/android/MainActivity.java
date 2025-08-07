@@ -16,6 +16,9 @@ import com.fodsdk.core.FodSDK;
 import com.fodsdk.core.IPlatformCallback;
 import com.fodsdk.entities.FodPayEntity;
 import com.fodsdk.entities.FodRole;
+import com.fodsdk.utils.DeviceUtil;
+import com.fodsdk.utils.LogUtil;
+import com.hihonor.ads.identifier.AdvertisingIdClient;
 
 public class MainActivity extends Activity {
 
@@ -91,6 +94,20 @@ public class MainActivity extends Activity {
         binding.btnEnterServer.setOnClickListener(view -> FodSDK.get().logEvent(FodConstants.Event.SCENE_ENTRY, getRole()));
         binding.btnRoleCreate.setOnClickListener(view -> FodSDK.get().logEvent(FodConstants.Event.SCENE_CREATE_ROLE, getRole()));
         binding.btnRoleLevelUp.setOnClickListener(view -> FodSDK.get().logEvent(FodConstants.Event.SCENE_LEVEL, getRole()));
+        binding.btnOaId.setOnClickListener(view -> new Thread(() -> {
+            String device = DeviceUtil.getPhoneModel();
+            try {
+                AdvertisingIdClient.Info info = AdvertisingIdClient.getAdvertisingIdInfo(getApplicationContext());
+                if (null != info) {
+                    LogUtil.i("getAdvertisingIdInfo id=" + info.id + ", isLimitAdTrackingEnabled=" + info.isLimit);
+                    runOnUiThread(() -> binding.tvOaId.setText("【" + device + "】OAID: " + info.id + ", isLimit: " + info.isLimit));
+
+                }
+            } catch (Exception e) {
+                LogUtil.i("getAdvertisingIdInfo Exception: " + e.toString());
+                runOnUiThread(() -> binding.tvOaId.setText("【" + device + "】OAID: " + e.toString()));
+            }
+        }).start());
     }
 
     private FodRole getRole() {
